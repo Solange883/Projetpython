@@ -1,11 +1,13 @@
 #ce qui reste
-#creation du fichier formulaire ajout livret scolaire et integration des rem qui reste
-#menu bouton inscription pour presi jury puis il rempli les candiats
-#listes notes
-#creation jury
-#crud
+#Bouton modifier,suppimer,update candidat
+#bouton inscription pour presi jury puis il rempli les candiats
+#bouton afficher listes notes
+#creation fichier jury
 #nouveau modeles notes pour les candidats repechés
-#crer table second tour
+#creer table second tour
+#implmenter RM11
+#FICHIER GENEREPDF
+
 
 import sqlite3
 
@@ -13,7 +15,7 @@ from candidat import CandidatManager
 from menu import UI
 from notes import NotesManager
 from anonymat import AnonymatManager
-
+from livretscolaire import LivretManager
 
 class DatabaseManager:
     def __init__(self, db_name="BD_BFEM.sqlite"):
@@ -106,6 +108,23 @@ class DatabaseManager:
         self.cursor.execute("SELECT * FROM Candidats")
         return {"nombre_candidats": 2, "moyenne_generale": 14.5}
 
+    def fetch_moyenne_cycle(self, numero_table):
+        """Récupère la moy du cycle et le nbre de fois pour un candidat donné."""
+        self.cursor.execute("SELECT moyenne_cycle, nombre_de_fois FROM LivretScolaire WHERE `N° de table` = ?",
+                            (numero_table,))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0], result[1]
+        else:
+            return None, 0
+
+    def insert_livret_scolaire(self, livret):
+        self.cursor.execute('''
+        INSERT INTO LivretScolaire (`N° de table`, `nombre_de_fois`, moyenne_6e, moyenne_5e, moyenne_4e, moyenne_3e, moyenne_Cycle)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', livret)
+        self.conn.commit()
+
 
     def close(self):
 
@@ -120,13 +139,14 @@ if __name__ == "__main__":
     anonymat_manager = AnonymatManager()
     candidat_manager = CandidatManager(db_manager, anonymat_manager)
     notes_manager = NotesManager(db_manager, anonymat_manager)
+    livret_manager= LivretManager(db_manager)
 
     #pour generer tous les anonymat de la Base
     #anonymat_manager.generer_anonymats_pour_tous()
 
 
     # Créez une instance de UI et démarrez l'application
-    ui = UI(candidat_manager, notes_manager, anonymat_manager)
+    ui = UI(candidat_manager, notes_manager, anonymat_manager, livret_manager)
     ui.creer_page_principale()
 
 

@@ -131,7 +131,7 @@ class NotesManager:
             anonymat_principal = anonymat_dict.get(numero_table_candidat, "Inconnu")
 
             # Calculer les résultats
-            resultats = notes_obj.calculer_resultats()
+            resultats = notes_obj.calculer_resultats(self.db_manager)
             resultat_str = (f"Anonymat Principal: {anonymat_principal} | Total: {resultats['total_points']} | "
                             f"Bonus EPS: {resultats['bonus_eps']} | Bonus Fac.: {resultats['bonus_facultatif']} | "
                             f"Décision: {resultats['decision']}\n")

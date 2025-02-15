@@ -2,7 +2,7 @@
 
 
 class Notes:
-    def __init__(self, numero_table, notes):
+    def __init__(self, numero_table, notes, moyenne_cycle=None,nbre_fois=None):
         self.numero_table = numero_table
 
         #converir tuple en dico
@@ -24,6 +24,8 @@ class Notes:
             }
         else:
             self.notes = notes if notes else {i: 0 for i in range(1, 13)}
+        self.moyenne_cycle = moyenne_cycle
+        self.nbre_fois=nbre_fois
         self.bonus_eps = 0
         self.bonus_facultatif = 0
         self.total_points = 0
@@ -46,9 +48,9 @@ class Notes:
 
 
         if eps >= 10:
-                self.bonus_eps = eps - 10  # Bonus si EPS >= 10
+                self.bonus_eps = eps - 10
         else:
-                self.bonus_eps = eps - 10  # Malus si EPS < 10
+                self.bonus_eps = eps - 10
 
 
         if epreuve_fac > 10:
@@ -70,22 +72,41 @@ class Notes:
             total += note * coef
         self.total_points = total + self.bonus_eps + self.bonus_facultatif
 
-    def determiner_decision(self):
+    def determiner_decision(self, db_manager):
+        """Détermine la décision en fonction des règles métiers."""
+        # Récupérer la moyenne du cycle depuis la table LivretScolaire
+        self.moyenne_cycle ,self.nbre_fois= db_manager.fetch_moyenne_cycle(self.numero_table)
 
-        seuil_admission = 180
-        seuil_repechage = 160
 
-        if self.total_points >= seuil_admission:
-            self.decision = "Admis"
-        elif self.total_points >= seuil_repechage:
-            self.decision = "Repêchage"
-        else:
+        # Règles métiers
+        if self.total_points >= 180:  # RM4
+            self.decision = "Admis d'office"
+        elif self.total_points >= 153:  # RM5
+            self.decision = "Passage au second tour"
+        else:  # RM6
             self.decision = "Échec"
 
-    def calculer_resultats(self):
+        if self.nbre_fois>=2:
+            self.decision = "Échec"
+        else:
+            # Repêchage basé sur la moy du cycle
+            if self.moyenne_cycle is not None and self.moyenne_cycle >= 12:
+                self.decision += " (Repêchable)"
+
+
+            if 171 <= self.total_points < 180:
+                self.decision = "Repêchable d'office"
+            elif 144 <= self.total_points < 153:  # RM9
+                self.decision = "Repêchable au second tour"
+
+
+            if 76 <= self.total_points < 80:
+                self.decision = "Repêchable pour le second tour"
+
+    def calculer_resultats(self,db_manager):
         self.calcul_bonus()
         self.calcul_total_points()
-        self.determiner_decision()
+        self.determiner_decision(db_manager)
         return {
             "total_points": self.total_points,
             "bonus_eps": self.bonus_eps,
