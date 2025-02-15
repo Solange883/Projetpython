@@ -1,0 +1,137 @@
+#ce qui reste
+#creation du fichier formulaire ajout livret scolaire et integration des rem qui reste
+#menu bouton inscription pour presi jury puis il rempli les candiats
+#listes notes
+#creation jury
+#crud
+#nouveau modeles notes pour les candidats repechés
+#crer table second tour
+
+import sqlite3
+
+from candidat import CandidatManager
+from menu import UI
+from notes import NotesManager
+from anonymat import AnonymatManager
+
+
+class DatabaseManager:
+    def __init__(self, db_name="BD_BFEM.sqlite"):
+        self.db_name = db_name
+        self.conn = sqlite3.connect(self.db_name)
+        self.cursor = self.conn.cursor()
+        self.init_db()
+
+    def init_db(self):
+
+        self.cursor.execute(''' 
+        CREATE TABLE IF NOT EXISTS Candidats (
+            `N° de table` INTEGER PRIMARY KEY,
+            `Prenom (s)` TEXT,
+            `NOM` TEXT,
+            `Date de nais.` TEXT,
+            `Lieu de nais.` TEXT,
+            `Sexe` TEXT,
+            `Etablissement` TEXT,
+            `Type de candidat` TEXT,
+            `Nationnallite` TEXT,
+            `Etat Sportif` BOOLEAN,
+            `Epreuve_Facultative` TEXT
+        )''')
+
+        # Table du livret scolaire
+        self.cursor.execute('''
+                CREATE TABLE IF NOT EXISTS LivretScolaire (
+                    `N° de table` INTEGER  ,
+                    `nombre_de_fois` INTEGER,
+                    `moyenne_6e` REAL,
+                    `moyenne_5e` REAL,
+                    `moyenne_4e` REAL,
+                    `moyenne_3e` REAL,
+                    `moyenne_cycle` REAL,
+                    FOREIGN KEY(`N° de table`) REFERENCES Candidats(`N° de table`)
+                )
+            ''')
+
+        # Table des notes
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS Notes (
+                  `N° de table` INTEGER PRIMARY KEY,
+                  `Note CF  ` REAL,
+                  `Note Ort  ` REAL,
+                  `Note TSQ  ` REAL ,
+                  `Note IC` REAL ,
+                  `Note HG` REAL ,
+                  `Note MATH` REAL ,
+                  `Note PC/LV2` REAL ,
+                  `Note SVT` REAL ,
+                  `Note ANG1` REAL ,
+                  `Note ANG2` REAL,
+                  `Note EPS` REAL ,
+                  `Note Ep Fac` REAL ,
+                FOREIGN KEY(`N° de table`) REFERENCES Candidats(`N° de table`)
+            )
+        ''')
+
+        # Table des anonymats
+        self.cursor.execute('''
+                CREATE TABLE IF NOT EXISTS Anonymat (
+                    `N° de table` INTEGER  PRIMARY KEY,
+                    anonymat_principal INTEGER UNIQUE NOT NULL,
+                    anonymats_epreuves TEXT,
+                    FOREIGN KEY(`N° de table`) REFERENCES Candidats(`N° de table`) 
+                )
+            ''')
+
+        self.conn.commit()
+
+    def fetch_candidats(self):
+        self.cursor.execute("SELECT * FROM Candidats")
+        return self.cursor.fetchall()
+
+    def insert_candidat(self, candidat):
+        self.cursor.execute("INSERT INTO Candidats VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", candidat)
+        self.conn.commit()
+
+    def insert_notes(self, notes):
+        self.cursor.execute("INSERT INTO Notes VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", notes)
+        self.conn.commit()
+
+    def fetch_notes(self, numero_table):
+        self.cursor.execute("SELECT * FROM Notes WHERE  `N° de table`= ?", (numero_table,))
+        return self.cursor.fetchone()
+
+    def fetch_statistiques(self):
+        # Exemplede statistique cest a refaire
+        self.cursor.execute("SELECT * FROM Candidats")
+        return {"nombre_candidats": 2, "moyenne_generale": 14.5}
+
+
+    def close(self):
+
+        self.conn.close()
+
+
+
+
+if __name__ == "__main__":
+
+    db_manager = DatabaseManager()
+    anonymat_manager = AnonymatManager()
+    candidat_manager = CandidatManager(db_manager, anonymat_manager)
+    notes_manager = NotesManager(db_manager, anonymat_manager)
+
+    #pour generer tous les anonymat de la Base
+    #anonymat_manager.generer_anonymats_pour_tous()
+
+
+    # Créez une instance de UI et démarrez l'application
+    ui = UI(candidat_manager, notes_manager, anonymat_manager)
+    ui.creer_page_principale()
+
+
+    db_manager.close()
+
+
+
+
