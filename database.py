@@ -2,7 +2,7 @@
 #Bouton modifier,suppimer,update candidat
 #bouton inscription pour presi jury puis il rempli les candiats
 #bouton afficher listes notes
-#creation fichier jury
+#table jury
 
 #nouveau modeles notes pour les candidats repechés
 #creer table second tour
