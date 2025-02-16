@@ -15,15 +15,15 @@ class UI:
         fenetre.title("Gestion des Candidats")
 
 
-        Button(fenetre, text="Ajouter", command=self.candidat_manager.ajouter_candidat).pack(pady=20)
+        Button(fenetre, text="Ajouter Candidat", command=self.candidat_manager.ajouter_candidat).pack(pady=20)
 
 
-        Button(fenetre, text="Afficher", command=self.candidat_manager.afficher_candidats).pack(pady=20)
+        Button(fenetre, text="Afficher Candidats", command=self.candidat_manager.afficher_candidats).pack(pady=20)
 
         Button(fenetre, text="AjouterLivretScolaire", command=self.livret_manager.ajouter_livret_scolaire).pack(pady=10)
 
 
-        Button(fenetre, text="Gérer les Notes", command=self.notes_manager.ajouter_notes).pack(pady=10)
+        Button(fenetre, text="Ajouter Notes", command=self.notes_manager.ajouter_notes).pack(pady=10)
 
 
         Button(fenetre, text="Délibération", command=self.notes_manager.gerer_deliberation).pack(pady=10)
@@ -32,7 +32,7 @@ class UI:
         Button(fenetre, text="Statistiques", command=self.candidat_manager.afficher_statistiques).pack(pady=10)
 
 
-        Button(fenetre, text="Afficher les Anonymats", command=self.anonymat_manager.afficher_anonymats).pack(pady=10)
+        Button(fenetre, text="Afficher Anonymats", command=self.anonymat_manager.afficher_anonymats).pack(pady=10)
 
         #Button(fenetre, text="Genererpdf", command=self.).pack(pady=10)
 
