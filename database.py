@@ -1,12 +1,17 @@
 #ce qui reste
-#Bouton modifier,suppimer,update candidat
-#bouton inscription pour presi jury puis il rempli les candiats
-#bouton afficher listes notes
-#table jury
+#ameliorer la fonction afficher_candidats
+
+#Bouton et fonction modifier,suppimer candidat
+
+#bouton et fonction afficher listes notes
+
+#table jury (je sais pas si on doit le faire)
+
+#statistiques
 
 #nouveau modeles notes pour les candidats repechés
 #creer table second tour
-#implmenter RM11
+#implementer RM11
 #FICHIER GENEREPDF
 
 
