@@ -3,6 +3,7 @@
 #bouton inscription pour presi jury puis il rempli les candiats
 #bouton afficher listes notes
 #creation fichier jury
+
 #nouveau modeles notes pour les candidats repechés
 #creer table second tour
 #implmenter RM11
@@ -147,7 +148,7 @@ if __name__ == "__main__":
 
     # Créez une instance de UI et démarrez l'application
     ui = UI(candidat_manager, notes_manager, anonymat_manager, livret_manager)
-    ui.creer_page_principale()
+    ui.demarrer_application()
 
 
     db_manager.close()

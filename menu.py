@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import Button
-
+from jury import JuryPage
 
 class UI:
     def __init__(self, candidat_manager, notes_manager,anonymat_manager,livret_manager):
@@ -37,3 +37,9 @@ class UI:
         #Button(fenetre, text="Genererpdf", command=self.).pack(pady=10)
 
         fenetre.mainloop()
+
+    def demarrer_application(self):
+            """Démarre l'application avec la page du jury."""
+            # Crée la page du jury et passe une fonction pour naviguer vers la page principale
+            jury_page = JuryPage(on_submit=self.creer_page_principale)
+            jury_page.ajouter_jury()
