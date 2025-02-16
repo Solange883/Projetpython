@@ -11,7 +11,7 @@
 
 #nouveau modeles notes pour les candidats repechés
 #creer table second tour
-#implementer RM11
+
 #FICHIER GENEREPDF
 
 
