@@ -9,7 +9,7 @@
 
 #statistiques
 
-#nouveau modeles notes pour les candidats repechés
+#nouveau modeles notes pour les candidats au second tour
 #creer table second tour
 
 #FICHIER GENEREPDF
