@@ -15,7 +15,9 @@ class CandidatManager:
         # Création de la fenêtre principale
         fenetre_affichage = Tk()
         fenetre_affichage.title("Liste des Candidats")
-        fenetre_affichage.geometry("1000x500")  # Agrandir la fenêtre pour afficher toutes les colonnes
+        fenetre_affichage.geometry("700x450")
+        fenetre_affichage.configure(bg="white")
+
 
         # Création d'un frame pour contenir le Treeview et les scrollbars
         frame = Frame(fenetre_affichage)

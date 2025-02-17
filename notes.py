@@ -1,7 +1,7 @@
 from tkinter import *
-from tkinter import Button, messagebox, Text, Scrollbar
+from tkinter import Button, messagebox, Text, Scrollbar,ttk
 from calculrem import Notes
-from database import fetch_notes2
+
 
 
 class NotesManager:
@@ -93,12 +93,65 @@ class NotesManager:
 
         fenetre.mainloop()
 
-
-    #Fonction pour afficher l'ensemble des notes des candidats
     def afficher_notes(self):
-        notes = self.fetch_notes2()
-        for note in notes:
-            print(note)
+        """Affiche toutes les notes avec tous les champs de la table."""
+
+        candidats = self.db_manager.fetch_notes2()
+
+        # Création de la fenêtre principale
+        fenetre_affichage = Tk()
+        fenetre_affichage.title("Liste des notes")
+        fenetre_affichage.geometry("700x450")
+        fenetre_affichage.configure(bg="white")
+
+
+        # Création d'un frame pour contenir le Treeview et les scrollbars
+        frame = Frame(fenetre_affichage)
+        frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Définition des colonnes
+        colonnes = ("N° de table" ,
+                  "Note CF  " ,
+                  "Note Ort  " ,
+                  "Note TSQ  "  ,
+                  "Note IC"  ,
+                  "Note HG"  ,
+                  "Note MATH" ,
+                  "Note PC/LV2"  ,
+                  "Note SVT"  ,
+                  "Note ANG1"  ,
+                  "Note ANG2" ,
+                  "Note EPS"  ,
+                  "Note Ep Fac")
+
+        # Création du Treeview
+        tree = ttk.Treeview(frame, columns=colonnes, show="headings")
+
+        # Définition des en-têtes de colonnes
+        for col in colonnes:
+            tree.heading(col, text=col)  # Nom de la colonne
+            tree.column(col, width=120, anchor="center")  # Largeur des colonnes ajustée
+
+        # Ajout des données dans le tableau
+        for candidat in candidats:
+            tree.insert("", "end", values=candidat)
+
+        # Scrollbars
+        scrollbar_y = Scrollbar(frame, orient="vertical", command=tree.yview)
+        scrollbar_y.pack(side="right", fill="y")
+        tree.configure(yscrollcommand=scrollbar_y.set)
+
+        scrollbar_x = Scrollbar(frame, orient="horizontal", command=tree.xview)
+        scrollbar_x.pack(side="bottom", fill="x")
+        tree.configure(xscrollcommand=scrollbar_x.set)
+
+        # Placement du tableau dans la fenêtre
+        tree.pack(fill="both", expand=True)
+
+        # Lancer l'interface
+        fenetre_affichage.mainloop()
+
+
 
     def gerer_deliberation(self):
         fenetre_deliberation = Tk()

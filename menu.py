@@ -26,6 +26,8 @@ class UI:
 
         Button(fenetre, text="Ajouter NotesPremierTour", command=self.notes_manager.ajouter_notes).pack(pady=10)
 
+        Button(fenetre, text="Afficher NotesPremierTour", command=self.notes_manager.afficher_notes).pack(pady=10)
+
 
         Button(fenetre, text="Délibération 1erTour", command=self.notes_manager.gerer_deliberation).pack(pady=10)
 
