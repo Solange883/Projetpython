@@ -1,6 +1,7 @@
 #ce qui reste
+#RM sur second tour?(le probleme lajout des notesdusecondtour)
 
-#Bouton et fonction modifier,suppimer candidat
+#Bouton et fonction modifier candidat
 
 #bouton et fonction afficher listes notes
 
@@ -8,8 +9,6 @@
 
 #statistiques(le taux de réussite, la moyenne des notes)
 
-#nouveau modeles notes pour les candidats au second tour
-#creer table second tour
 
 #FICHIER GENEREPDF
 

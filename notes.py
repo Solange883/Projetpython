@@ -92,6 +92,9 @@ class NotesManager:
 
         fenetre.mainloop()
 
+
+    #on met ici fonction afficher listesnotes apres
+
     def gerer_deliberation(self):
         fenetre_deliberation = Tk()
         fenetre_deliberation.title("Délibération des Candidats")

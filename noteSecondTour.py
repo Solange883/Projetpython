@@ -94,4 +94,4 @@ class NotesSecondTourManager:
         fenetre.mainloop()
 
 
-        """fonction Affiche les résultats du second tour."""
+        """fonction Affiche les résultats du second tour?"""
