@@ -16,11 +16,11 @@ class UI:
         fenetre.configure(bg="white")
 
         # Titre principal
-        Label(fenetre, text="Gestion des Candidats", font=("Helvetica", 18, "bold"), fg="blue", bg="#f0f8ff").pack(
+        Label(fenetre, text="Gestion des Candidats", font=("Helvetica", 16, "bold"), fg="blue", bg="#f0f8ff").pack(
             pady=20)
 
         bouton_style = {
-            "font": ("Helvetica", 12, "bold"),
+            "font": ("Helvetica", 9, "bold"),
             "fg": "black",
             "bg": "white",
             "padx": 20,

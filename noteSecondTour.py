@@ -1,6 +1,7 @@
-from tkinter import *
-from tkinter import Button, messagebox, Text, Scrollbar
-from notes import Notes  # Importer la classe Notes depuis notes.py
+
+from tkinter import messagebox
+import tkinter as tk
+
 from calculrem import Notes
 
 
@@ -37,31 +38,23 @@ class NotesSecondTourManager:
         return anonymats_admissibles
 
     def saisir_notes_second_tour(self):
-
-
         def enregistrer():
-
             anonymat_principal = entry_anonymat_principal.get().strip()
 
-
-            # Vérifier si l'anonymat appartient bien aux candidats admissibles
             if anonymat_principal not in self.anonymats_second_tour:
                 messagebox.showerror("Erreur", "Ce candidat n'est pas admissible au second tour.")
                 return
-
 
             numero_table = self.anonymat_manager.recuperer_numero_table_par_anonymat(anonymat_principal)
             if not numero_table:
                 messagebox.showerror("Erreur", "Anonymat principal non trouvé.")
                 return
 
-
             francais = float(entry_francais.get())
             mathematiques = float(entry_mathematiques.get())
             pc_lv2 = float(entry_pc_lv2.get())
 
-            # Validation des notes (doivent être entre 0 et 20)
-            if not (0 <= francais <= 20) or not (0 <= mathematiques <= 20) or not (0 <= pc_lv2 <= 20):
+            if not all(0 <= note <= 20 for note in [francais, mathematiques, pc_lv2]):
                 messagebox.showwarning("Erreur", "Les notes doivent être comprises entre 0 et 20.")
                 return
 
@@ -69,29 +62,41 @@ class NotesSecondTourManager:
             messagebox.showinfo("Succès", "Les notes du second tour ont été enregistrées avec succès.")
             fenetre.destroy()
 
-        fenetre = Tk()
+        fenetre = tk.Tk()
         fenetre.title("Saisie des Notes du Second Tour")
+        fenetre.geometry("400x300")
+        fenetre.configure(bg="white")
 
-        # Formulaire de saisie des notes du second tour
-        Label(fenetre, text="Anonymat Principal:").grid(row=0, column=0)
-        entry_anonymat_principal = Entry(fenetre)
-        entry_anonymat_principal.grid(row=0, column=1)
+        tk.Label(fenetre, text="Saisie des Notes du Second Tour", bg="white", fg="blue",
+                 font=("Helvetica", 16, "bold")).pack(pady=10)
 
-        Label(fenetre, text="Français :").grid(row=1, column=0)
-        entry_francais = Entry(fenetre)
-        entry_francais.grid(row=1, column=1)
+        cadre = tk.Frame(fenetre, bg="white", padx=20, pady=20)
+        cadre.pack(pady=10)
 
-        Label(fenetre, text="Mathématiques :").grid(row=2, column=0)
-        entry_mathematiques = Entry(fenetre)
-        entry_mathematiques.grid(row=2, column=1)
+        champs = ["Anonymat Principal", "Français", "Mathématiques", "PC/LV2"]
+        entries = {}
 
-        Label(fenetre, text="PC/LV2 :").grid(row=3, column=0)
-        entry_pc_lv2 = Entry(fenetre)
-        entry_pc_lv2.grid(row=3, column=1)
+        for i, champ in enumerate(champs):
+            tk.Label(cadre, text=champ + ":", bg="white", fg="blue", font=("Helvetica", 12)).grid(row=i, column=0,
+                                                                                                  sticky="w", pady=5)
+            entry = tk.Entry(cadre, font=("Helvetica", 12), width=25, bd=2, relief="solid")
+            entry.grid(row=i, column=1, pady=5, padx=10)
+            entries[champ] = entry
 
-        Button(fenetre, text="Enregistrer", command=enregistrer).grid(row=4, column=0, columnspan=2)
+        bouton_enregistrer = tk.Button(cadre, text="Enregistrer", command=enregistrer,
+                                       font=("Helvetica", 12, "bold"), fg="black", bg="white",
+                                       padx=10, pady=5, relief="solid", bd=3,
+                                       highlightbackground="black", highlightthickness=2)
+        bouton_enregistrer.grid(row=len(champs), column=0, columnspan=2, pady=20)
+
+        entry_anonymat_principal = entries["Anonymat Principal"]
+        entry_francais = entries["Français"]
+        entry_mathematiques = entries["Mathématiques"]
+        entry_pc_lv2 = entries["PC/LV2"]
 
         fenetre.mainloop()
 
 
-        """fonction Affiche les résultats du second tour?"""
+
+
+    """fonction Affiche les résultats du second tour?"""

@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import Button, messagebox, Text, Scrollbar,ttk
+from tkinter import Tk, Frame, Label, Entry, Button, Canvas, Scrollbar, messagebox,ttk
 from calculrem import Notes
 
 
@@ -9,25 +9,22 @@ class NotesManager:
         self.db_manager = db_manager
         self.anonymat_manager = anonymat_manager
 
+
+
     def ajouter_notes(self):
-
-
         def enregistrer():
-            # pour récupérer l'anonymat principal saisi
-            anonymat_principal = entry_anonymat_principal.get()
-
-            # pour avoir le numéro de table associé à l'anonymat principal
+            anonymat_principal = entries["Anonymat Principal"].get()
             numero_table = self.anonymat_manager.recuperer_numero_table_par_anonymat(anonymat_principal)
             if not numero_table:
                 messagebox.showerror("Erreur", "Anonymat principal non trouvé.")
                 return
 
-
             notes = (
-                numero_table , entry_compo_franc.get(), entry_dictee.get(), entry_etude_de_texte.get(),
-                entry_instruction_civique.get(), entry_histoire_geographie.get(), entry_mathematiques.get(),
-                entry_pc_lv2.get(), entry_svt.get(), entry_anglais1.get(), entry_anglais_oral.get(),
-                entry_eps.get(), entry_epreuve_facultative.get()
+                numero_table, entries["Composition Français"].get(), entries["Dictée"].get(),
+                entries["Étude de texte"].get(), entries["Instruction Civique"].get(),
+                entries["Histoire Géographie"].get(), entries["Mathématiques"].get(),
+                entries["PC/LV2"].get(), entries["SVT"].get(), entries["Anglais 1"].get(),
+                entries["Anglais Oral"].get(), entries["EPS"].get(), entries["Épreuve Facultative"].get()
             )
             self.db_manager.insert_notes(notes)
             messagebox.showinfo("Succès", "Notes ajoutées avec succès")
@@ -35,61 +32,48 @@ class NotesManager:
 
         fenetre = Tk()
         fenetre.title("Ajout Notes")
+        fenetre.geometry("600x700")
+        fenetre.configure(bg="#f0f8ff")
 
-        # Formulaire d'ajout des notes
-        Label(fenetre, text="Anonymat Principal:").grid(row=0, column=0)
-        entry_anonymat_principal = Entry(fenetre)
-        entry_anonymat_principal.grid(row=0, column=1)
+        Label(fenetre, text="Ajout des Notes", bg="#f0f8ff", fg="blue", font=("Helvetica", 14, "bold")).pack(pady=10)
 
-        Label(fenetre, text="Composition Français:").grid(row=1, column=0)
-        entry_compo_franc = Entry(fenetre)
-        entry_compo_franc.grid(row=1, column=1)
+        # Création du Canvas et de la Scrollbar
+        cadre_canvas = Frame(fenetre, bg="#f0f8ff")
+        cadre_canvas.pack(fill="both", expand=True, padx=10, pady=10)
 
-        Label(fenetre, text="Dictée:").grid(row=2, column=0)
-        entry_dictee = Entry(fenetre)
-        entry_dictee.grid(row=2, column=1)
+        canvas = Canvas(cadre_canvas, bg="#f0f8ff", height=500)
+        scrollbar = Scrollbar(cadre_canvas, orient="vertical", command=canvas.yview)
+        contenu_frame = Frame(canvas, bg="#f0f8ff")
 
-        Label(fenetre, text="Étude de texte:").grid(row=3, column=0)
-        entry_etude_de_texte = Entry(fenetre)
-        entry_etude_de_texte.grid(row=3, column=1)
+        contenu_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
-        Label(fenetre, text="Instruction Civique:").grid(row=4, column=0)
-        entry_instruction_civique = Entry(fenetre)
-        entry_instruction_civique.grid(row=4, column=1)
+        canvas.create_window((0, 0), window=contenu_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
 
-        Label(fenetre, text="Histoire Géographie:").grid(row=5, column=0)
-        entry_histoire_geographie = Entry(fenetre)
-        entry_histoire_geographie.grid(row=5, column=1)
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
 
-        Label(fenetre, text="Mathématiques:").grid(row=6, column=0)
-        entry_mathematiques = Entry(fenetre)
-        entry_mathematiques.grid(row=6, column=1)
+        champs = [
+            "Anonymat Principal", "Composition Français", "Dictée", "Étude de texte", "Instruction Civique",
+            "Histoire Géographie", "Mathématiques", "PC/LV2", "SVT", "Anglais 1", "Anglais Oral", "EPS",
+            "Épreuve Facultative"
+        ]
 
-        Label(fenetre, text="PC/LV2:").grid(row=7, column=0)
-        entry_pc_lv2 = Entry(fenetre)
-        entry_pc_lv2.grid(row=7, column=1)
+        entries = {}
 
-        Label(fenetre, text="SVT:").grid(row=8, column=0)
-        entry_svt = Entry(fenetre)
-        entry_svt.grid(row=8, column=1)
+        for i, champ in enumerate(champs):
+            Label(contenu_frame, text=champ + ":", bg="#f0f8ff", fg="blue", font=("Helvetica", 12)).grid(row=i,
+                                                                                                         column=0,
+                                                                                                         sticky="w",
+                                                                                                         pady=10)
+            entry = Entry(contenu_frame, font=("Helvetica", 12), width=30, bd=2, relief="solid")
+            entry.grid(row=i, column=1, pady=10, padx=10)
+            entries[champ] = entry
 
-        Label(fenetre, text="Anglais 1:").grid(row=9, column=0)
-        entry_anglais1 = Entry(fenetre)
-        entry_anglais1.grid(row=9, column=1)
-
-        Label(fenetre, text="Anglais Oral:").grid(row=10, column=0)
-        entry_anglais_oral = Entry(fenetre)
-        entry_anglais_oral.grid(row=10, column=1)
-
-        Label(fenetre, text="EPS:").grid(row=11, column=0)
-        entry_eps = Entry(fenetre)
-        entry_eps.grid(row=11, column=1)
-
-        Label(fenetre, text="Épreuve Facultative:").grid(row=12, column=0)
-        entry_epreuve_facultative = Entry(fenetre)
-        entry_epreuve_facultative.grid(row=12, column=1)
-
-        Button(fenetre, text="Enregistrer", command=enregistrer).grid(row=13, column=0, columnspan=2)
+        bouton_enregistrer = Button(contenu_frame, text="Enregistrer", command=enregistrer,
+                                    font=("Helvetica", 12, "bold"), fg="black", bg="#007bff",
+                                    padx=20, pady=10, relief="solid", bd=3)
+        bouton_enregistrer.grid(row=len(champs), column=0, columnspan=2, pady=20)
 
         fenetre.mainloop()
 

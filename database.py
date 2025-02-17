@@ -3,11 +3,9 @@
 
 #Bouton et fonction modifier candidat
 
-
 #table jury(je sais pas si on doit le faire)
 
 #statistiques(le taux de réussite, la moyenne des notes)
-
 
 #FICHIER GENEREPDF
 

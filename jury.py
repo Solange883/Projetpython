@@ -49,31 +49,24 @@ class JuryPage:
         fenetre.mainloop()
 
     def ajouter_jury(self):
-
-
         fenetre = Tk()
         fenetre.title("Paramétrage du Jury")
         fenetre.geometry("600x700")
         fenetre.config(bg="#f0f8ff")
 
-        # Titre principal
         Label(fenetre, text="Paramétrage du Jury", font=("Helvetica", 16, "bold"), fg="blue", bg="#f0f8ff").pack(
             pady=20)
 
-        # Cadre pour le formulaire
         cadre = Frame(fenetre, bg="#f0f8ff", padx=20, pady=20)
         cadre.pack(pady=10)
 
-        # Liste des champs du formulaire
         champs = [
             "IA [Région]", "IEF [Départements]", "Localité", "Centre d’Examen",
             "Président de Jury", "Téléphone"
         ]
 
-        # Dictionnaire pour stocker les entrées
         entries = {}
 
-        # Création des champs du formulaire
         for i, champ in enumerate(champs):
             Label(cadre, text=champ + ":", bg="#f0f8ff", fg="blue", font=("Helvetica", 12)).grid(row=i, column=0,
                                                                                                  sticky="w", pady=10)
@@ -81,44 +74,33 @@ class JuryPage:
             entry.grid(row=i, column=1, pady=10, padx=10)
             entries[champ] = entry
 
-        # Bouton Valider
         bouton_valider = Button(cadre, text="Valider et Accéder au Menu", command=self.valider_formulaire,
-                                font=("Helvetica", 12, "bold"), fg="black", bg="#007bff",
-                                padx=20, pady=10, relief="solid", bd=3)
+                                font=("Helvetica", 12, "bold"), fg="black", bg="white", padx=20, pady=10,
+                                relief="solid", bd=3)
         bouton_valider.grid(row=len(champs), column=0, columnspan=2, pady=20)
 
-        # Assigner les entrées aux variables
-        entry_ia = entries["IA [Région]"]
-        entry_ief = entries["IEF [Départements]"]
-        entry_localite = entries["Localité"]
-        entry_centre = entries["Centre d’Examen"]
-        entry_president = entries["Président de Jury"]
-        entry_telephone = entries["Téléphone"]
+        self.entries = entries
 
         fenetre.mainloop()
+
     def valider_formulaire(self):
-        #valier et appelons onsubmit
-        # Récupérer les valeurs des champs
-        ia = self.entry_ia.get()
-        ief = self.entry_ief.get()
-        localite = self.entry_localite.get()
-        centre = self.entry_centre.get()
-        president = self.entry_president.get()
-        telephone = self.entry_telephone.get()
+        IA = self.entries["IA [Région]"].get()
+        IEF = self.entries["IEF [Départements]"].get()
+        localite = self.entries["Localité"].get()
+        centre = self.entries["Centre d’Examen"].get()
+        president = self.entries["Président de Jury"].get()
+        telephone = self.entries["Téléphone"].get()
 
-
-        if ia and ief and localite and centre and president and telephone:
-            # on stocke les val dans parametres_jury
+        if IA and IEF and localite and centre and president and telephone:
             parametres_jury = {
-                "IA": ia,
-                "IEF": ief,
+                "IA": IA,
+                "IEF": IEF,
                 "Localité": localite,
                 "Centre d’Examen": centre,
                 "Président de Jury": president,
                 "Téléphone": telephone,
             }
 
-            self.on_submit()  # on passe à la page principale
+            self.on_submit()
         else:
             messagebox.showwarning("Erreur", "Veuillez remplir tous les champs.")
-
