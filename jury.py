@@ -5,6 +5,19 @@ class JuryPage:
     def __init__(self, on_submit):
         self.on_submit = on_submit  # Fonction à appeler lorsque le formulaire est soumis
 
+    def ouvrir_formulaire_jury(self):
+
+
+        # Fenêtre principale avec un bouton "Se connecter"
+        fenetre = Tk()
+        fenetre.title("Page d'accueil")
+
+        Label(fenetre, text="Logiciel destiné à la gestion des données et à la délibération des candidats lors de l'examen du BFEM au Sénégal ").pack(pady=50)
+        Button(fenetre, text="Se connecter", command=self.ajouter_jury).pack(pady=60)
+
+        fenetre.mainloop()
+
+
     def ajouter_jury(self):
         """Crée la page du jury avec les champs de paramétrage."""
         fenetre = Tk()

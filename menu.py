@@ -45,4 +45,4 @@ class UI:
             """Démarre l'application avec la page du jury."""
             # Crée la page du jury et passe une fonction pour naviguer vers la page principale
             jury_page = JuryPage(on_submit=self.creer_page_principale)
-            jury_page.ajouter_jury()
+            jury_page.ouvrir_formulaire_jury()
