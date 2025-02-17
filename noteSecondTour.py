@@ -11,7 +11,7 @@ class NotesSecondTourManager:
         self.anonymats_second_tour = self.recuperer_anonymats_second_tour()
 
     def recuperer_anonymats_second_tour(self):
-        """Récupère la liste des anonymats des candidats admissibles au second tour."""
+        """Récupère la liste des anonymats des candidats admissible au second tour."""
         anonymats_admissibles = set()
 
         # Récupérer les anonymats principaux

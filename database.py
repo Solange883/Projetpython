@@ -1,5 +1,5 @@
 #ce qui reste
-#RM sur second tour?(le probleme lajout des notesdusecondtour)
+#RM sur second tour(le probleme lajout des notesdusecondtour)?
 
 #Bouton et fonction modifier candidat
 
