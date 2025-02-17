@@ -178,6 +178,12 @@ class DatabaseManager:
         ))
         self.conn.commit()
 
+    def supprimer_candidat(self, num_table):
+            query = "DELETE FROM Candidats WHERE `N° de table` = ?"
+            self.cursor.execute(query, (num_table,))
+            self.conn.commit()
+
+
 
 
     def close(self):

@@ -40,6 +40,7 @@ class UI:
             ("Ajouter Candidat", self.candidat_manager.ajouter_candidat),
             ("Afficher Candidats", self.candidat_manager.afficher_candidats),
             ("Modifier Candidat", self.candidat_manager.modifier_candidat),
+            ("Supprimer Candidat", self.candidat_manager.supprimer_candidat),
             ("Ajouter Livret Scolaire", self.livret_manager.ajouter_livret_scolaire),
             ("Ajouter Notes Premier Tour", self.notes_manager.ajouter_notes),
             ("Afficher Notes Premier Tour", self.notes_manager.afficher_notes),

@@ -61,7 +61,7 @@ class CandidatManager:
                 entries["Numéro Table"].get(), entries["Prénom(s)"].get(), entries["Nom"].get(),
                 entries["Date Naissance"].get(), entries["Lieu Naissance"].get(), entries["Sexe (M/F)"].get(),
                 entries["Etablissement"].get(), entries["Type de candidat"].get(), entries["Nationnallité"].get(),
-                entries["Aptitude Sportive (OUI/NON)"].get(), entries["Epreuve Facultative"].get()
+                entries["Etat Sportif"].get(), entries["Epreuve Facultative"].get()
             )
             self.db_manager.insert_candidat(candidat)
             messagebox.showinfo("Succès", "Candidat ajouté avec succès")
@@ -79,7 +79,7 @@ class CandidatManager:
         champs = [
             "Numéro Table", "Prénom(s)", "Nom", "Date Naissance",
             "Lieu Naissance", "Sexe (M/F)", "Etablissement", "Type de candidat",
-            "Nationalité", "Aptitude Sportive (OUI/NON)", "Epreuve Facultative"
+            "Nationnallité", "Etat Sportif", "Epreuve Facultative"
         ]
 
         entries = {}
@@ -238,6 +238,87 @@ class CandidatManager:
         bouton_enregistrer.grid(row=(len(champs) // 2) + 1, column=2, columnspan=2, pady=20)
 
         fenetre_modification.mainloop()
+
+    def recharger_candidats(self, tree):
+        # Vider le Treeview
+        for row in tree.get_children():
+            tree.delete(row)
+
+        # Récupérer les candidats depuis la base de données
+        candidats = self.db_manager.fetch_candidats()
+
+        # Remplir le Treeview avec les nouveaux candidats
+        for candidat in candidats:
+            tree.insert("", "end", values=candidat)
+
+    def supprimer_candidat(self):
+        def supprimer():
+            # Récupérer l'ID du candidat sélectionné
+            selected_item = tree.selection()
+            if not selected_item:
+                messagebox.showwarning("Avertissement", "Veuillez sélectionner un candidat à supprimer.")
+                return
+
+            # Récupérer le numéro de table du candidat sélectionné
+            num_table = tree.item(selected_item, 'values')[0]  # "N° de table" est la clé primaire
+
+            # Demander une confirmation avant de supprimer
+            confirmation = messagebox.askyesno("Confirmation", "Êtes-vous sûr de vouloir supprimer ce candidat ?")
+            if confirmation:
+                # Supprimer le candidat de la base de données
+                self.db_manager.supprimer_candidat(num_table)
+
+                # Recharger la liste des candidats dans le Treeview
+                self.recharger_candidats(tree)
+
+                # Afficher un message de succès
+                messagebox.showinfo("Succès", "Candidat supprimé avec succès")
+
+        # Création de la fenêtre principale
+        fenetre_suppression = Tk()
+        fenetre_suppression.title("Supprimer un Candidat")
+        fenetre_suppression.geometry("800x600")  # Taille de la fenêtre
+        fenetre_suppression.configure(bg="white")
+
+        # Frame pour le Treeview
+        frame_tree = Frame(fenetre_suppression, bg="white")
+        frame_tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Création du Treeview pour afficher les candidats
+        colonnes = (
+            "N° de table", "Prenom (s)", "NOM", "Date de nais.", "Lieu de nais.",
+            "Sexe", "Etablissement", "Type de candidat", "Nationnallité", "Etat Sportif", "Epreuve Facultative"
+        )
+        tree = ttk.Treeview(frame_tree, columns=colonnes, show="headings")
+
+        for col in colonnes:
+            tree.heading(col, text=col)
+            tree.column(col, width=100, anchor="center")
+
+        # Remplir le Treeview avec les candidats
+        candidats = self.db_manager.fetch_candidats()
+        for candidat in candidats:
+            tree.insert("", "end", values=candidat)
+
+        # Scrollbars pour le Treeview
+        scrollbar_y = Scrollbar(frame_tree, orient="vertical", command=tree.yview)
+        scrollbar_y.pack(side="right", fill="y")
+        tree.configure(yscrollcommand=scrollbar_y.set)
+
+        scrollbar_x = Scrollbar(frame_tree, orient="horizontal", command=tree.xview)
+        scrollbar_x.pack(side="bottom", fill="x")
+        tree.configure(xscrollcommand=scrollbar_x.set)
+
+        tree.pack(fill="both", expand=True)
+
+        # Bouton Supprimer
+        bouton_supprimer = Button(fenetre_suppression, text="Supprimer", command=supprimer,
+                                  font=("Helvetica", 12, "bold"), fg="black", bg="white",
+                                  padx=10, pady=5, relief="solid", bd=3,
+                                  highlightbackground="black", highlightthickness=2)
+        bouton_supprimer.pack(pady=20)
+
+        fenetre_suppression.mainloop()
 
     def recharger_candidats(self, tree):
         # Vider le Treeview
