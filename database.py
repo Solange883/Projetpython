@@ -1,9 +1,7 @@
 #ce qui reste
-#RM sur second tour(le probleme lajout des notesdusecondtour)?
 
 #Bouton et fonction modifier candidat
 
-#table jury(je sais pas si on doit le faire)
 
 #statistiques(le taux de réussite, la moyenne des notes)
 
@@ -38,9 +36,9 @@ class DatabaseManager:
             `Sexe` TEXT,
             `Etablissement` TEXT,
             `Type de candidat` TEXT,
-            `Nationnallite` TEXT,
+            `Nationnallité` TEXT,
             `Etat Sportif` BOOLEAN,
-            `Epreuve_Facultative` TEXT
+            `Epreuve Facultative` TEXT
         )''')
 
         # Table du livret scolaire
@@ -157,6 +155,30 @@ class DatabaseManager:
     def fetch_notes_second_tour_2(self):
         self.cursor.execute("SELECT * FROM Notes_Second_Tour ")
         return self.cursor.fetchall()
+
+    def get_candidat_by_num_table(self, num_table):
+        # Récupérer un candidat par son numéro de table
+        query = "SELECT * FROM Candidats WHERE `N° de table` = ?"
+        self.cursor.execute(query, (num_table,))
+        return self.cursor.fetchone()
+    def update_candidat(self, num_table, nouvelles_valeurs):
+        # Mettre à jour un candidat
+        query = """
+        UPDATE Candidats
+        SET `Prenom (s)` = ?, `NOM` = ?, `Date de nais.` = ?, `Lieu de nais.` = ?,
+            `Sexe` = ?, `Etablissement` = ?, `Type de candidat` = ?, `Nationnallité` = ?,
+            `Etat Sportif` = ?, `Epreuve Facultative` = ?
+        WHERE `N° de table` = ?
+        """
+        self.cursor.execute(query, (
+            nouvelles_valeurs["Prenom (s)"], nouvelles_valeurs["NOM"], nouvelles_valeurs["Date de nais."],
+            nouvelles_valeurs["Lieu de nais."], nouvelles_valeurs["Sexe"], nouvelles_valeurs["Etablissement"],
+            nouvelles_valeurs["Type de candidat"], nouvelles_valeurs["Nationnallité"],
+            nouvelles_valeurs["Etat Sportif"], nouvelles_valeurs["Epreuve Facultative"], num_table
+        ))
+        self.conn.commit()
+
+
 
     def close(self):
         self.conn.close()

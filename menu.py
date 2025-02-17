@@ -39,6 +39,7 @@ class UI:
         boutons = [
             ("Ajouter Candidat", self.candidat_manager.ajouter_candidat),
             ("Afficher Candidats", self.candidat_manager.afficher_candidats),
+            ("Modifier Candidat", self.candidat_manager.modifier_candidat),
             ("Ajouter Livret Scolaire", self.livret_manager.ajouter_livret_scolaire),
             ("Ajouter Notes Premier Tour", self.notes_manager.ajouter_notes),
             ("Afficher Notes Premier Tour", self.notes_manager.afficher_notes),

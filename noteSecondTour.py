@@ -1,7 +1,6 @@
 
 from tkinter import Tk,ttk,  Label,  Button, Text, Scrollbar, messagebox,Frame
 import tkinter as tk
-
 from calculrem import Notes
 from calculrem2 import Notes2
 
