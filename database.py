@@ -120,6 +120,10 @@ class DatabaseManager:
     def fetch_notes(self, numero_table):
         self.cursor.execute("SELECT * FROM Notes WHERE  `N° de table`= ?", (numero_table,))
         return self.cursor.fetchone()
+    
+    def fetch_notes2(self):
+        self.cursor.execute("SELECT * FROM Notes")
+        return self.cursor.fetchall()
 
     def fetch_statistiques(self):
         # Exemplede statistique cest a refaire

@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import Button, messagebox, Text, Scrollbar
 from calculrem import Notes
+from database import fetch_notes2
 
 
 class NotesManager:
@@ -93,7 +94,11 @@ class NotesManager:
         fenetre.mainloop()
 
 
-    #on met ici fonction afficher listesnotes apres
+    #Fonction pour afficher l'ensemble des notes des candidats
+    def afficher_notes(self):
+        notes = self.fetch_notes2()
+        for note in notes:
+            print(note)
 
     def gerer_deliberation(self):
         fenetre_deliberation = Tk()
