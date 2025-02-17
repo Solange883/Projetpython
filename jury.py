@@ -1,5 +1,6 @@
 
-from tkinter import Tk, Label, Entry, Button, messagebox,font
+from tkinter import Tk, Label, Entry, Button, messagebox, font, Frame
+
 
 class JuryPage:
     def __init__(self, on_submit):
@@ -48,42 +49,53 @@ class JuryPage:
         fenetre.mainloop()
 
     def ajouter_jury(self):
+
+
         fenetre = Tk()
         fenetre.title("Paramétrage du Jury")
-        fenetre.config(bg="white")
+        fenetre.geometry("600x700")
+        fenetre.config(bg="#f0f8ff")
 
-        label_style = {"bg": "white", "fg": "blue", "font": ("Helvetica", 12)}
-        entry_style = {"width": 40, "bg": "#f0f8ff", "font": ("Helvetica", 12), "bd": 1, "relief": "solid"}
+        # Titre principal
+        Label(fenetre, text="Paramétrage du Jury", font=("Helvetica", 16, "bold"), fg="blue", bg="#f0f8ff").pack(
+            pady=20)
 
-        Label(fenetre, text="IA [Région] :", **label_style).pack(pady=10)
-        self.entry_ia = Entry(fenetre, **entry_style)
-        self.entry_ia.pack(pady=5)
+        # Cadre pour le formulaire
+        cadre = Frame(fenetre, bg="#f0f8ff", padx=20, pady=20)
+        cadre.pack(pady=10)
 
-        Label(fenetre, text="IEF [Départements] :", **label_style).pack(pady=10)
-        self.entry_ief = Entry(fenetre, **entry_style)
-        self.entry_ief.pack(pady=5)
+        # Liste des champs du formulaire
+        champs = [
+            "IA [Région]", "IEF [Départements]", "Localité", "Centre d’Examen",
+            "Président de Jury", "Téléphone"
+        ]
 
-        Label(fenetre, text="Localité :", **label_style).pack(pady=10)
-        self.entry_localite = Entry(fenetre, **entry_style)
-        self.entry_localite.pack(pady=5)
+        # Dictionnaire pour stocker les entrées
+        entries = {}
 
-        Label(fenetre, text="Centre d’Examen :", **label_style).pack(pady=10)
-        self.entry_centre = Entry(fenetre, **entry_style)
-        self.entry_centre.pack(pady=5)
+        # Création des champs du formulaire
+        for i, champ in enumerate(champs):
+            Label(cadre, text=champ + ":", bg="#f0f8ff", fg="blue", font=("Helvetica", 12)).grid(row=i, column=0,
+                                                                                                 sticky="w", pady=10)
+            entry = Entry(cadre, font=("Helvetica", 12), width=30, bd=2, relief="solid", bg="#ffffff")
+            entry.grid(row=i, column=1, pady=10, padx=10)
+            entries[champ] = entry
 
-        Label(fenetre, text="Président de Jury :", **label_style).pack(pady=10)
-        self.entry_president = Entry(fenetre, **entry_style)
-        self.entry_president.pack(pady=5)
+        # Bouton Valider
+        bouton_valider = Button(cadre, text="Valider et Accéder au Menu", command=self.valider_formulaire,
+                                font=("Helvetica", 12, "bold"), fg="black", bg="#007bff",
+                                padx=20, pady=10, relief="solid", bd=3)
+        bouton_valider.grid(row=len(champs), column=0, columnspan=2, pady=20)
 
-        Label(fenetre, text="Téléphone :", **label_style).pack(pady=10)
-        self.entry_telephone = Entry(fenetre, **entry_style)
-        self.entry_telephone.pack(pady=5)
-
-        Button(fenetre, text="Valider et Accéder au Menu", command=self.valider_formulaire, bg="blue", fg="white",
-               font=("Helvetica", 12), bd=0, relief="flat").pack(pady=20)
+        # Assigner les entrées aux variables
+        entry_ia = entries["IA [Région]"]
+        entry_ief = entries["IEF [Départements]"]
+        entry_localite = entries["Localité"]
+        entry_centre = entries["Centre d’Examen"]
+        entry_president = entries["Président de Jury"]
+        entry_telephone = entries["Téléphone"]
 
         fenetre.mainloop()
-
     def valider_formulaire(self):
         #valier et appelons onsubmit
         # Récupérer les valeurs des champs

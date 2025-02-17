@@ -57,7 +57,6 @@ class CandidatManager:
     def ajouter_candidat(self):
 
         def enregistrer():
-
             candidat = (
                 entry_numero.get(), entry_prenom.get(), entry_nom.get(), entry_date_naissance.get(),
                 entry_lieu_naissance.get(), entry_sexe.get(), entry_etablissement.get(), entry_typecandidat.get(),
@@ -69,58 +68,55 @@ class CandidatManager:
             numero_table = candidat[0]  # on suppose que le premier élément est le numéro de table
             anonymat_principal = self.anonymat_manager.generer_anonymat(numero_table)
 
-
-
-
         fenetre = Tk()
         fenetre.title("Ajout Candidat")
+        fenetre.geometry("600x700")  # Taille de la fenêtre
+        fenetre.configure(bg="#f0f8ff")  # Fond de la fenêtre
 
-        # Formulaire d'ajout de candidat
-        Label(fenetre, text="Numéro Table:").grid(row=0, column=0)
-        entry_numero = Entry(fenetre)
-        entry_numero.grid(row=0, column=1)
+        # Titre principal
+        Label(fenetre, text="Ajout d'un candidat", font=("Helvetica", 16, "bold"), fg="blue", bg="#f0f8ff").pack(
+            pady=20)
 
-        Label(fenetre, text="Prénom(s):").grid(row=1, column=0)
-        entry_prenom = Entry(fenetre)
-        entry_prenom.grid(row=1, column=1)
+        # Cadre pour le formulaire
+        cadre = Frame(fenetre, bg="#f0f8ff", padx=20, pady=20)
+        cadre.pack(pady=10)
 
-        Label(fenetre, text="Nom:").grid(row=2, column=0)
-        entry_nom = Entry(fenetre)
-        entry_nom.grid(row=2, column=1)
+        # Liste des champs du formulaire
+        champs = [
+            "Numéro Table", "Prénom(s)", "Nom", "Date Naissance", "Lieu Naissance",
+            "Sexe (M/F)", "Etablissement", "Type de candidat", "Nationalité",
+            "Aptitude Sportive (OUI/NON)", "Epreuve Facultative"
+        ]
 
-        Label(fenetre, text="Date Naissance:").grid(row=3, column=0)
-        entry_date_naissance = Entry(fenetre)
-        entry_date_naissance.grid(row=3, column=1)
+        # Dictionnaire pour stocker les entrées
+        entries = {}
 
-        Label(fenetre, text="Lieu Naissance:").grid(row=4, column=0)
-        entry_lieu_naissance = Entry(fenetre)
-        entry_lieu_naissance.grid(row=4, column=1)
+        # Création des champs du formulaire
+        for i, champ in enumerate(champs):
+            Label(cadre, text=champ + ":", bg="#f0f8ff", fg="blue", font=("Helvetica", 12)).grid(row=i, column=0,
+                                                                                                 sticky="w", pady=10)
+            entry = Entry(cadre, font=("Helvetica", 12), width=30, bd=2, relief="solid")
+            entry.grid(row=i, column=1, pady=10, padx=10)
+            entries[champ] = entry
 
-        Label(fenetre, text="Sexe (M/F):").grid(row=5, column=0)
-        entry_sexe = Entry(fenetre)
-        entry_sexe.grid(row=5, column=1)
+        # Bouton Enregistrer
+        bouton_enregistrer = Button(cadre, text="Enregistrer", command=enregistrer,
+                                    font=("Helvetica", 12, "bold"), fg="black", bg="#007bff",
+                                    padx=20, pady=10, relief="solid", bd=3)
+        bouton_enregistrer.grid(row=len(champs), column=0, columnspan=2, pady=20)
 
-        Label(fenetre, text="Etablissement:").grid(row=6, column=0)
-        entry_etablissement = Entry(fenetre)
-        entry_etablissement.grid(row=6, column=1)
-
-        Label(fenetre, text="Type de candidat:").grid(row=7, column=0)
-        entry_typecandidat = Entry(fenetre)
-        entry_typecandidat.grid(row=7, column=1)
-
-        Label(fenetre, text="Nationalité:").grid(row=8, column=0)
-        entry_nationalite = Entry(fenetre)
-        entry_nationalite.grid(row=8, column=1)
-
-        Label(fenetre, text="Aptitude Sportive (OUI/NON):").grid(row=9, column=0)
-        entry_apt_sport = Entry(fenetre)
-        entry_apt_sport.grid(row=9, column=1)
-
-        Label(fenetre, text="Epreuve Facultative:").grid(row=10, column=0)
-        entry_epr_fac = Entry(fenetre)
-        entry_epr_fac.grid(row=10, column=1)
-
-        Button(fenetre, text="Enregistrer", command=enregistrer).grid(row=11, column=0, columnspan=2)
+        # Assigner les entrées aux variables
+        entry_numero = entries["Numéro Table"]
+        entry_prenom = entries["Prénom(s)"]
+        entry_nom = entries["Nom"]
+        entry_date_naissance = entries["Date Naissance"]
+        entry_lieu_naissance = entries["Lieu Naissance"]
+        entry_sexe = entries["Sexe (M/F)"]
+        entry_etablissement = entries["Etablissement"]
+        entry_typecandidat = entries["Type de candidat"]
+        entry_nationalite = entries["Nationalité"]
+        entry_apt_sport = entries["Aptitude Sportive (OUI/NON)"]
+        entry_epr_fac = entries["Epreuve Facultative"]
 
         fenetre.mainloop()
 

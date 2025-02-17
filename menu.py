@@ -22,7 +22,7 @@ class UI:
         bouton_style = {
             "font": ("Helvetica", 12, "bold"),
             "fg": "black",
-            "bg": "#007bff",
+            "bg": "white",
             "padx": 20,
             "pady": 10,
             "relief": "solid",
