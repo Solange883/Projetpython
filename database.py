@@ -117,7 +117,6 @@ class DatabaseManager:
     def fetch_notes(self, numero_table):
         self.cursor.execute("SELECT * FROM Notes WHERE  `N° de table`= ?", (numero_table,))
         return self.cursor.fetchone()
-    
     def fetch_notes2(self):
         self.cursor.execute("SELECT * FROM Notes")
         return self.cursor.fetchall()
@@ -145,7 +144,6 @@ class DatabaseManager:
         self.conn.commit()
 
     def insert_notes_second_tour(self, numero_table, francais, mathematiques, pc_lv2):
-        """Enregistre les notes du second tour dans la base de données."""
         query = """
             INSERT INTO Notes_Second_Tour (`N° de table`, Francais, Mathematiques, `PC/LV2`)
             VALUES (?, ?, ?, ?)
@@ -153,10 +151,14 @@ class DatabaseManager:
         self.cursor.execute(query, (numero_table, francais, mathematiques, pc_lv2))
         self.conn.commit()
 
-
+    def fetch_notes_second_tour(self, numero_table):
+        self.cursor.execute("SELECT * FROM Notes_Second_Tour WHERE  `N° de table`= ?", (numero_table,))
+        return self.cursor.fetchone()
+    def fetch_notes_second_tour_2(self):
+        self.cursor.execute("SELECT * FROM Notes_Second_Tour ")
+        return self.cursor.fetchall()
 
     def close(self):
-
         self.conn.close()
 
 

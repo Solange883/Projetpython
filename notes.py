@@ -142,7 +142,7 @@ class NotesManager:
         fenetre_deliberation.title("Délibération des Candidats")
         fenetre_deliberation.geometry("600x400")
 
-        Label(fenetre_deliberation, text="Délibération des Candidats", font=("Arial", 14, "bold")).pack(pady=10)
+        Label(fenetre_deliberation, text="Délibération des Candidats du Premier Tour", font=("Arial", 14, "bold")).pack(pady=10)
 
         Button(fenetre_deliberation, text="Calculer les Résultats", command=self.afficher_resultats_PremierTour, bg="blue",
                fg="white").pack(pady=10)

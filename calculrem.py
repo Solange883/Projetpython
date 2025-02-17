@@ -1,4 +1,4 @@
-
+#PREMIERTOUR
 
 
 class Notes:
@@ -74,34 +74,42 @@ class Notes:
 
     def determiner_decision(self, db_manager):
         """Détermine la décision en fonction des règles métiers."""
+
         # Récupérer la moyenne du cycle depuis la table LivretScolaire
         self.moyenne_cycle ,self.nbre_fois= db_manager.fetch_moyenne_cycle(self.numero_table)
 
+        # RM8 : Repêchable d'office si total_points est entre 171 et 179,9
+        if 171 <= self.total_points < 180:
+            self.decision = "Repêchable d'office"
+            return
 
-        # Règles métiers
-        if self.total_points >= 180:  # RM4
+        # RM9 : Repêchable au 2nd tour si total_points est entre 144 et 152,9
+        if 144 <= self.total_points < 153:
+            self.decision = "Repêchable au second tour"
+            return
+
+        # RM4 : Admis d'office si total_points >= 180
+        if self.total_points >= 180:
             self.decision = "Admis d'office"
-        elif self.total_points >= 153:  # RM5
+            return
+
+        # RM5 : Passage au 2nd tour si total_points >= 153
+        if self.total_points >= 153:
             self.decision = "Passage au second tour"
-        else:  # RM6
-            self.decision = "Échec"
+            return
 
-        if self.nbre_fois>=2:
-            self.decision = "Échec"
-        else:
-            # Repêchage basé sur la moy du cycle
-            if self.moyenne_cycle is not None and self.moyenne_cycle >= 12:
-                self.decision += " (Repêchable)"
+        # RM6 : Échec si total_points < 153
+        if self.total_points < 153:
+            self.decision = "Échec "
+            return
 
-
-            if 171 <= self.total_points < 180:
-                self.decision = "Repêchable d'office"
-            elif 144 <= self.total_points < 153:  # RM9
-                self.decision = "Repêchable au second tour"
+        # RM7 : Repêchage basé sur la moyenne du cycle (si moyenne_cycle >= 12)
+        if self.moyenne_cycle is not None and self.moyenne_cycle >= 12:
+            self.decision += "(Repêchable)"
 
 
-            if 76 <= self.total_points < 80:
-                self.decision = "Repêchable pour le second tour"
+
+
 
     def calculer_resultats(self,db_manager):
         self.calcul_bonus()
