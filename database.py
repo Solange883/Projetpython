@@ -3,7 +3,6 @@
 
 #Bouton et fonction modifier candidat
 
-#bouton et fonction afficher listes notes
 
 #table jury(je sais pas si on doit le faire)
 

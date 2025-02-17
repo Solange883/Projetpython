@@ -11,35 +11,44 @@ class UI:
         self.notes_second_tour_manager=notes_second_tour_manager
 
     def creer_page_principale(self):
-        """La page principale elle contient tous les boutons'"""
         fenetre = Tk()
         fenetre.title("Gestion des Candidats")
+        fenetre.configure(bg="white")
 
+        # Titre principal
+        Label(fenetre, text="Gestion des Candidats", font=("Helvetica", 18, "bold"), fg="blue", bg="#f0f8ff").pack(
+            pady=20)
 
-        Button(fenetre, text="Ajouter Candidat", command=self.candidat_manager.ajouter_candidat).pack(pady=20)
+        bouton_style = {
+            "font": ("Helvetica", 12, "bold"),
+            "fg": "black",
+            "bg": "#007bff",
+            "padx": 20,
+            "pady": 10,
+            "relief": "solid",
+            "bd": 3,
+            "highlightbackground": "blue",
+            "highlightthickness": 2
+        }
 
-
-        Button(fenetre, text="Afficher Candidats", command=self.candidat_manager.afficher_candidats).pack(pady=20)
-
-        Button(fenetre, text="AjouterLivretScolaire", command=self.livret_manager.ajouter_livret_scolaire).pack(pady=10)
-
-
-        Button(fenetre, text="Ajouter NotesPremierTour", command=self.notes_manager.ajouter_notes).pack(pady=10)
-
-        Button(fenetre, text="Afficher NotesPremierTour", command=self.notes_manager.afficher_notes).pack(pady=10)
-
-
-        Button(fenetre, text="Délibération 1erTour", command=self.notes_manager.gerer_deliberation).pack(pady=10)
-
-
-        Button(fenetre, text="Statistiques", command=self.candidat_manager.afficher_statistiques).pack(pady=10)
-
-
-        Button(fenetre, text="Afficher Anonymats", command=self.anonymat_manager.afficher_anonymats).pack(pady=10)
-
-        Button(fenetre, text="Ajouter NotesSecondTour", command=self.notes_second_tour_manager.saisir_notes_second_tour).pack(pady=10)
-
-        #Button(fenetre, text="Genererpdf", command=self.).pack(pady=10)
+        Button(fenetre, text="Ajouter Candidat", command=self.candidat_manager.ajouter_candidat, **bouton_style).pack(
+            pady=5)
+        Button(fenetre, text="Afficher Candidats", command=self.candidat_manager.afficher_candidats,
+               **bouton_style).pack(pady=5)
+        Button(fenetre, text="Ajouter Livret Scolaire", command=self.livret_manager.ajouter_livret_scolaire,
+               **bouton_style).pack(pady=5)
+        Button(fenetre, text="Ajouter Notes Premier Tour", command=self.notes_manager.ajouter_notes,
+               **bouton_style).pack(pady=5)
+        Button(fenetre, text="Afficher Notes Premier Tour", command=self.notes_manager.afficher_notes,
+               **bouton_style).pack(pady=5)
+        Button(fenetre, text="Délibération 1er Tour", command=self.notes_manager.gerer_deliberation,
+               **bouton_style).pack(pady=5)
+        Button(fenetre, text="Statistiques", command=self.candidat_manager.afficher_statistiques, **bouton_style).pack(
+            pady=5)
+        Button(fenetre, text="Afficher Anonymats", command=self.anonymat_manager.afficher_anonymats,
+               **bouton_style).pack(pady=5)
+        Button(fenetre, text="Ajouter Notes Second Tour",
+               command=self.notes_second_tour_manager.saisir_notes_second_tour, **bouton_style).pack(pady=5)
 
         fenetre.mainloop()
 
