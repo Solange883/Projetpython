@@ -27,8 +27,18 @@ class AnonymatManager:
         # Générer des anonymats d'épreuves
         anonymats_epreuves = {
             "compo_franc": str(uuid.uuid4()),  # Exemple d'anonymat pour une épreuve
-            "dictee": str(uuid.uuid4()),  # Exemple d'anonymat pour une autre épreuve
-            # Ajoutez d'autres épreuves ici
+            "dictee": str(uuid.uuid4()), # Exemple d'anonymat pour une autre épreuve
+            "etude_de_texte": str(uuid.uuid4()),
+            "instruction_civique":str(uuid.uuid4()),
+            "histoire_geographie":str(uuid.uuid4()),
+            "mathematiques": str(uuid.uuid4()),
+            "pc_lv2": str(uuid.uuid4()),
+            "svt": str(uuid.uuid4()),
+            "anglais1": str(uuid.uuid4()),
+            "anglais_oral": str(uuid.uuid4()),
+            "eps": str(uuid.uuid4()),
+            "epreuve_fac": str(uuid.uuid4()),
+
         }
 
         # Vérifier si le numéro de table existe déjà

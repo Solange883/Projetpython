@@ -99,7 +99,7 @@ class NotesManager:
 
         Label(fenetre_deliberation, text="Délibération des Candidats", font=("Arial", 14, "bold")).pack(pady=10)
 
-        Button(fenetre_deliberation, text="Calculer les Résultats", command=self.afficher_resultats, bg="blue",
+        Button(fenetre_deliberation, text="Calculer les Résultats", command=self.afficher_resultats_PremierTour, bg="blue",
                fg="white").pack(pady=10)
 
         # Zone pour affichager les résultats
@@ -112,7 +112,7 @@ class NotesManager:
 
         fenetre_deliberation.mainloop()
 
-    def afficher_resultats(self):
+    def afficher_resultats_PremierTour(self):
         """affichage resultat deliberation"""
         self.resultat_text.delete("1.0", "end")  # Efface le texte précédent
 

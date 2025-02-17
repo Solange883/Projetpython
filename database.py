@@ -1,5 +1,4 @@
 #ce qui reste
-#ameliorer la fonction afficher_candidats
 
 #Bouton et fonction modifier,suppimer candidat
 
@@ -7,7 +6,7 @@
 
 #table jury(je sais pas si on doit le faire)
 
-#statistiques
+#statistiques(le taux de réussite, la moyenne des notes)
 
 #nouveau modeles notes pour les candidats au second tour
 #creer table second tour
@@ -19,6 +18,7 @@ import sqlite3
 
 from candidat import CandidatManager
 from menu import UI
+from noteSecondTour import NotesSecondTourManager
 from notes import NotesManager
 from anonymat import AnonymatManager
 from livretscolaire import LivretManager
@@ -91,6 +91,19 @@ class DatabaseManager:
                 )
             ''')
 
+        # Table des notes Second Tour
+        self.cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS Notes_Second_Tour  (
+                          `N° de table` INTEGER PRIMARY KEY,
+                          `Francais` REAL,
+                          `Mathematiques` REAL,
+                          `PC/LV2` REAL ,
+                        FOREIGN KEY(`N° de table`) REFERENCES Candidats(`N° de table`)
+                    )
+                ''')
+
+
+
         self.conn.commit()
 
     def fetch_candidats(self):
@@ -131,6 +144,16 @@ class DatabaseManager:
         ''', livret)
         self.conn.commit()
 
+    def insert_notes_second_tour(self, numero_table, francais, mathematiques, pc_lv2):
+        """Enregistre les notes du second tour dans la base de données."""
+        query = """
+            INSERT INTO Notes_Second_Tour (`N° de table`, Francais, Mathematiques, `PC/LV2`)
+            VALUES (?, ?, ?, ?)
+        """
+        self.cursor.execute(query, (numero_table, francais, mathematiques, pc_lv2))
+        self.conn.commit()
+
+
 
     def close(self):
 
@@ -146,13 +169,14 @@ if __name__ == "__main__":
     candidat_manager = CandidatManager(db_manager, anonymat_manager)
     notes_manager = NotesManager(db_manager, anonymat_manager)
     livret_manager= LivretManager(db_manager)
+    notes_second_tour_manager=NotesSecondTourManager(db_manager, anonymat_manager)
 
     #pour generer tous les anonymat de la Base
     #anonymat_manager.generer_anonymats_pour_tous()
 
 
     # Créez une instance de UI et démarrez l'application
-    ui = UI(candidat_manager, notes_manager, anonymat_manager, livret_manager)
+    ui = UI(candidat_manager, notes_manager, anonymat_manager, livret_manager,notes_second_tour_manager)
     ui.demarrer_application()
 
 

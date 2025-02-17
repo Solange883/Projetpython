@@ -3,11 +3,12 @@ from tkinter import Button
 from jury import JuryPage
 
 class UI:
-    def __init__(self, candidat_manager, notes_manager,anonymat_manager,livret_manager):
+    def __init__(self, candidat_manager, notes_manager,anonymat_manager,livret_manager,notes_second_tour_manager):
         self.candidat_manager = candidat_manager
         self.notes_manager = notes_manager
         self.anonymat_manager=anonymat_manager
         self.livret_manager=livret_manager
+        self.notes_second_tour_manager=notes_second_tour_manager
 
     def creer_page_principale(self):
         """La page principale elle contient tous les boutons'"""
@@ -23,7 +24,7 @@ class UI:
         Button(fenetre, text="AjouterLivretScolaire", command=self.livret_manager.ajouter_livret_scolaire).pack(pady=10)
 
 
-        Button(fenetre, text="Ajouter Notes", command=self.notes_manager.ajouter_notes).pack(pady=10)
+        Button(fenetre, text="Ajouter NotesPremierTour", command=self.notes_manager.ajouter_notes).pack(pady=10)
 
 
         Button(fenetre, text="Délibération", command=self.notes_manager.gerer_deliberation).pack(pady=10)
@@ -33,6 +34,8 @@ class UI:
 
 
         Button(fenetre, text="Afficher Anonymats", command=self.anonymat_manager.afficher_anonymats).pack(pady=10)
+
+        Button(fenetre, text="Ajouter NotesSecondTour", command=self.notes_second_tour_manager.saisir_notes_second_tour).pack(pady=10)
 
         #Button(fenetre, text="Genererpdf", command=self.).pack(pady=10)
 

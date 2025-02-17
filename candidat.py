@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import Listbox, Scrollbar, Frame, END, messagebox
+from tkinter import Listbox, Scrollbar, Frame,  messagebox,ttk
 
 
 class CandidatManager:
@@ -8,29 +8,48 @@ class CandidatManager:
         self.anonymat_manager = anonymat_manager
 
     def afficher_candidats(self):
+        """Affiche tous les candidats avec tous les champs de la table."""
 
-        candidats = self.db_manager.fetch_candidats()
+        candidats = self.db_manager.fetch_candidats()  # Récupération des candidats
 
+        # Création de la fenêtre principale
         fenetre_affichage = Tk()
         fenetre_affichage.title("Liste des Candidats")
-        fenetre_affichage.geometry("600x400")
+        fenetre_affichage.geometry("1000x500")  # Agrandir la fenêtre pour afficher toutes les colonnes
 
+        # Création d'un frame pour contenir le Treeview et les scrollbars
         frame = Frame(fenetre_affichage)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        listbox = Listbox(frame, width=100, height=20)
-        listbox.pack(side="left", fill="both", expand=True)
+        # Définition des colonnes
+        colonnes = ("Numéro de table", "Prénom(s)", "Nom", "Date de naissance", "Lieu de naissance",
+                    "Sexe", "Etablissement", "Type de candidat", "Nationalité", "Etat Sportif", "Épreuve Facultative")
 
-        scrollbar = Scrollbar(frame, orient="vertical", command=listbox.yview)
-        scrollbar.pack(side="right", fill="y")
+        # Création du Treeview
+        tree = ttk.Treeview(frame, columns=colonnes, show="headings")
 
-        listbox.config(yscrollcommand=scrollbar.set)
+        # Définition des en-têtes de colonnes
+        for col in colonnes:
+            tree.heading(col, text=col)  # Nom de la colonne
+            tree.column(col, width=120, anchor="center")  # Largeur des colonnes ajustée
 
-        # Affichage des candidats dans une liste
+        # Ajout des données dans le tableau
         for candidat in candidats:
-            texte_candidat = f"Num: {candidat[0]} | Nom: {candidat[2]} {candidat[1]} | Naissance: {candidat[3]} | Sexe: {candidat[5]}"
-            listbox.insert(END, texte_candidat)
+            tree.insert("", "end", values=candidat)
 
+        # Scrollbars
+        scrollbar_y = Scrollbar(frame, orient="vertical", command=tree.yview)
+        scrollbar_y.pack(side="right", fill="y")
+        tree.configure(yscrollcommand=scrollbar_y.set)
+
+        scrollbar_x = Scrollbar(frame, orient="horizontal", command=tree.xview)
+        scrollbar_x.pack(side="bottom", fill="x")
+        tree.configure(xscrollcommand=scrollbar_x.set)
+
+        # Placement du tableau dans la fenêtre
+        tree.pack(fill="both", expand=True)
+
+        # Lancer l'interface
         fenetre_affichage.mainloop()
 
     def ajouter_candidat(self):
