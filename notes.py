@@ -96,7 +96,7 @@ class NotesManager:
     def afficher_notes(self):
         """Affiche toutes les notes avec tous les champs de la table."""
 
-        candidats = self.db_manager.fetch_notes2()
+        notes = self.db_manager.fetch_notes2()
 
         # Création de la fenêtre principale
         fenetre_affichage = Tk()
@@ -133,8 +133,8 @@ class NotesManager:
             tree.column(col, width=120, anchor="center")  # Largeur des colonnes ajustée
 
         # Ajout des données dans le tableau
-        for candidat in candidats:
-            tree.insert("", "end", values=candidat)
+        for note in notes:
+            tree.insert("", "end", values=note)
 
         # Scrollbars
         scrollbar_y = Scrollbar(frame, orient="vertical", command=tree.yview)
