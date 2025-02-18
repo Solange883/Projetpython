@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import Listbox, Scrollbar, Frame,  messagebox,ttk
+from tkinter import  Scrollbar, Frame, messagebox, ttk
 
 
 class CandidatManager:
@@ -252,6 +252,8 @@ class CandidatManager:
         for candidat in candidats:
             tree.insert("", "end", values=candidat)
 
+
+
     def supprimer_candidat(self):
         def supprimer():
             # Récupérer l'ID du candidat sélectionné
@@ -332,8 +334,6 @@ class CandidatManager:
         # Remplir le Treeview avec les nouveaux candidats
         for candidat in candidats:
             tree.insert("", "end", values=candidat)
-
-
 
 
 
