@@ -25,7 +25,7 @@ class CandidatManager:
 
         # Définition des colonnes
         colonnes = ("Numéro de table", "Prénom(s)", "Nom", "Date de naissance", "Lieu de naissance",
-                    "Sexe", "Etablissement", "Type de candidat", "Nationalité", "Etat Sportif", "Épreuve Facultative")
+                    "Sexe", "Type de candidat", "Etablissement", "Nationalité", "Etat Sportif", "Épreuve Facultative")
 
         # Création du Treeview
         tree = ttk.Treeview(frame, columns=colonnes, show="headings")
@@ -60,7 +60,8 @@ class CandidatManager:
             candidat = (
                 entries["Numéro Table"].get(), entries["Prénom(s)"].get(), entries["Nom"].get(),
                 entries["Date Naissance"].get(), entries["Lieu Naissance"].get(), entries["Sexe (M/F)"].get(),
-                entries["Etablissement"].get(), entries["Type de candidat"].get(), entries["Nationnallité"].get(),
+                entries["Type de candidat"].get(),
+                entries["Etablissement"].get(), entries["Nationnallité"].get(),
                 entries["Etat Sportif"].get(), entries["Epreuve Facultative"].get()
             )
             self.db_manager.insert_candidat(candidat)
@@ -78,7 +79,7 @@ class CandidatManager:
 
         champs = [
             "Numéro Table", "Prénom(s)", "Nom", "Date Naissance",
-            "Lieu Naissance", "Sexe (M/F)", "Etablissement", "Type de candidat",
+            "Lieu Naissance", "Sexe (M/F)", "Type de candidat", "Etablissement",
             "Nationnallité", "Etat Sportif", "Epreuve Facultative"
         ]
 
@@ -119,8 +120,8 @@ class CandidatManager:
                 "Date de nais.": 3,
                 "Lieu de nais.": 4,
                 "Sexe": 5,
-                "Etablissement": 6,
-                "Type de candidat": 7,
+                "Type de candidat": 6,
+                "Etablissement": 7,
                 "Nationnallité": 8,
                 "Etat Sportif": 9,
                 "Epreuve Facultative": 10
@@ -148,8 +149,8 @@ class CandidatManager:
                 "Date de nais.": entries["Date de nais."].get(),
                 "Lieu de nais.": entries["Lieu de nais."].get(),
                 "Sexe": entries["Sexe"].get(),
-                "Etablissement": entries["Etablissement"].get(),
                 "Type de candidat": entries["Type de candidat"].get(),
+                "Etablissement": entries["Etablissement"].get(),
                 "Nationnallité": entries["Nationnallité"].get(),
                 "Etat Sportif": entries["Etat Sportif"].get().upper() in ["OUI", "TRUE", "1"],  # Convertir en booléen
                 "Epreuve Facultative": entries["Epreuve Facultative"].get()
@@ -175,7 +176,7 @@ class CandidatManager:
         # Création du Treeview pour afficher les candidats
         colonnes = (
             "N° de table", "Prenom (s)", "NOM", "Date de nais.", "Lieu de nais.",
-            "Sexe", "Etablissement", "Type de candidat", "Nationnallité", "Etat Sportif", "Epreuve Facultative"
+            "Sexe", "Type de candidat","Etablissement",  "Nationnallité", "Etat Sportif", "Epreuve Facultative"
         )
         tree = ttk.Treeview(frame_tree, columns=colonnes, show="headings")
 
@@ -206,7 +207,7 @@ class CandidatManager:
         # Champs de saisie pour les informations du candidat
         champs = [
             "N° de table", "Prenom (s)", "NOM", "Date de nais.", "Lieu de nais.",
-            "Sexe", "Etablissement", "Type de candidat", "Nationnallité", "Etat Sportif", "Epreuve Facultative"
+            "Sexe" , "Type de candidat", "Etablissement", "Nationnallité", "Etat Sportif", "Epreuve Facultative"
         ]
 
         entries = {}
@@ -287,7 +288,7 @@ class CandidatManager:
         # Création du Treeview pour afficher les candidats
         colonnes = (
             "N° de table", "Prenom (s)", "NOM", "Date de nais.", "Lieu de nais.",
-            "Sexe", "Etablissement", "Type de candidat", "Nationnallité", "Etat Sportif", "Epreuve Facultative"
+            "Sexe", "Type de candidat", "Etablissement",  "Nationnallité", "Etat Sportif", "Epreuve Facultative"
         )
         tree = ttk.Treeview(frame_tree, columns=colonnes, show="headings")
 

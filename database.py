@@ -1,8 +1,5 @@
 #ce qui reste
 
-#Bouton et fonction modifier candidat
-
-
 #statistiques(le taux de réussite, la moyenne des notes)
 
 #FICHIER GENEREPDF
@@ -34,8 +31,8 @@ class DatabaseManager:
             `Date de nais.` TEXT,
             `Lieu de nais.` TEXT,
             `Sexe` TEXT,
-            `Etablissement` TEXT,
             `Type de candidat` TEXT,
+            `Etablissement` TEXT,
             `Nationnallité` TEXT,
             `Etat Sportif` BOOLEAN,
             `Epreuve Facultative` TEXT
@@ -166,14 +163,14 @@ class DatabaseManager:
         query = """
         UPDATE Candidats
         SET `Prenom (s)` = ?, `NOM` = ?, `Date de nais.` = ?, `Lieu de nais.` = ?,
-            `Sexe` = ?, `Etablissement` = ?, `Type de candidat` = ?, `Nationnallité` = ?,
+            `Sexe` = ?, `Type de candidat` = ?, `Etablissement` = ?, `Nationnallité` = ?,
             `Etat Sportif` = ?, `Epreuve Facultative` = ?
         WHERE `N° de table` = ?
         """
         self.cursor.execute(query, (
             nouvelles_valeurs["Prenom (s)"], nouvelles_valeurs["NOM"], nouvelles_valeurs["Date de nais."],
-            nouvelles_valeurs["Lieu de nais."], nouvelles_valeurs["Sexe"], nouvelles_valeurs["Etablissement"],
-            nouvelles_valeurs["Type de candidat"], nouvelles_valeurs["Nationnallité"],
+            nouvelles_valeurs["Lieu de nais."], nouvelles_valeurs["Sexe"],nouvelles_valeurs["Type de candidat"],
+            nouvelles_valeurs["Etablissement"], nouvelles_valeurs["Nationnallité"],
             nouvelles_valeurs["Etat Sportif"], nouvelles_valeurs["Epreuve Facultative"], num_table
         ))
         self.conn.commit()

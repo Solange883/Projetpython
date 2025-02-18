@@ -100,7 +100,7 @@ class Notes:
 
         # RM6 : Échec si total_points < 153
         if self.total_points < 153:
-            self.decision = "Échec "
+            self.decision = "Échec"
             return
 
         # RM7 : Repêchage basé sur la moyenne du cycle (si moyenne_cycle >= 12)
