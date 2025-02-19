@@ -12,17 +12,17 @@ class CandidatManager:
         """Affiche tous les candidats avec tous les champs de la table."""
         candidats = self.db_manager.fetch_candidats()  # Récupération des candidats
 
-        # Création de la fenêtre principale
+
         fenetre_affichage = Tk()
         fenetre_affichage.title("Liste des Candidats")
         fenetre_affichage.geometry("700x450")
         fenetre_affichage.configure(bg="white")
 
-        # Création d'un frame pour contenir le Treeview et les scrollbars
+
         frame = Frame(fenetre_affichage)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Définition des colonnes
+
         colonnes = ("Numéro de table", "Prénom(s)", "Nom", "Date de naissance", "Lieu de naissance",
                     "Sexe", "Type de candidat", "Etablissement", "Nationalité", "Etat Sportif", "Épreuve Facultative")
 
@@ -104,12 +104,15 @@ class CandidatManager:
         pdf.output("Liste_des_candidats.pdf")
         messagebox.showinfo("Succès", "Le PDF a été généré avec succès sous le nom Liste_des_candidats.pdf !")
 
-
-
-
     def ajouter_candidat(self):
         def enregistrer():
-            # Accéder aux entrées via le dictionnaire `entries`
+            # Vérifier si tous les champs sont remplis
+            for champ, entry in entries.items():
+                if not entry.get().strip():  # Vérifie si le champ est vide ou contient uniquement des espaces
+                    messagebox.showerror("Erreur", f"Le champ '{champ}' est obligatoire.")
+                    return  # Arrête la fonction si un champ est vide
+
+            # Si tous les champs sont remplis, procéder à l'enregistrement
             candidat = (
                 entries["Numéro Table"].get(), entries["Prénom(s)"].get(), entries["Nom"].get(),
                 entries["Date Naissance"].get(), entries["Lieu Naissance"].get(), entries["Sexe (M/F)"].get(),
@@ -152,6 +155,7 @@ class CandidatManager:
         bouton_enregistrer.grid(row=len(champs), column=0, columnspan=2, pady=20)
 
         fenetre.mainloop()
+
 
     def modifier_candidat(self):
         def charger_candidat():
@@ -389,8 +393,9 @@ class CandidatManager:
             tree.insert("", "end", values=candidat)
 
 
-
     def afficher_statistiques(self):
+        stats = self.db_manager.fetch_statistiques()
+
         fenetre_statistiques = Tk()
         fenetre_statistiques.title("Statistiques")
         fenetre_statistiques.geometry("400x300")
@@ -399,10 +404,13 @@ class CandidatManager:
         Label(fenetre_statistiques, text="Statistiques des Candidats", bg="white", fg="blue",
               font=("Helvetica", 16, "bold")).pack(pady=10)
 
-        stats = self.db_manager.fetch_statistiques()
         Label(fenetre_statistiques, text=f"Nombre de candidats: {stats['nombre_candidats']}", bg="white",
               font=("Helvetica", 12)).pack(pady=5)
-        Label(fenetre_statistiques, text=f"Moyenne générale: {stats['moyenne_generale']}", bg="white",
+
+        Label(fenetre_statistiques, text=f"Taux de réussite: {stats['taux_reussite']}", bg="white",
+              font=("Helvetica", 12)).pack(pady=5)
+
+        Label(fenetre_statistiques, text=f"Moyenne générale des notes : {stats['moyenne_generale']} / 20", bg="white",
               font=("Helvetica", 12)).pack(pady=5)
 
 

@@ -108,6 +108,28 @@ class DatabaseManager:
         self.cursor.execute("SELECT * FROM Notes")
         return self.cursor.fetchall()
 
+    def get_nombre_total_candidats(self):
+        """Retourne le nombre total de candidats dans la base de données."""
+        self.cursor.execute("SELECT COUNT(*) FROM Candidats")
+        result = self.cursor.fetchone()
+        return result[0] if result else 0
+
+    def get_moyenne_generale(self):
+        """Calcule la moyenne générale de tous les candidats."""
+
+        self.cursor.execute("""
+              SELECT AVG((`Note CF  ` + `Note Ort  ` + `Note TSQ  ` + `Note IC` + 
+                          `Note HG` + `Note MATH` + `Note PC/LV2` + `Note SVT` + 
+                          `Note ANG1` + `Note ANG2` + `Note EPS` + `Note Ep Fac`) / 12) 
+              FROM Notes
+          """)
+
+        moyenne_generale = self.cursor.fetchone()[0]
+
+        return round(moyenne_generale, 2) if moyenne_generale else 0
+
+        self.conn.commit()
+
     def fetch_statistiques(self):
         # Exemplede statistique cest a refaire
         self.cursor.execute("SELECT * FROM Candidats")

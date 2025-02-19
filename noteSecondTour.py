@@ -47,6 +47,7 @@ class NotesSecondTourManager:
             anonymat_principal = str(anonymat_principal)
 
 
+
             if anonymat_principal not in self.anonymats_second_tour:
                 messagebox.showerror("Erreur", "Ce candidat n'est pas admissible au second tour.")
                 return
@@ -64,6 +65,13 @@ class NotesSecondTourManager:
             if not all(0 <= note <= 20 for note in [francais, mathematiques, pc_lv2]):
                 messagebox.showwarning("Erreur", "Les notes doivent être comprises entre 0 et 20.")
                 return
+
+            # Vérification des champs obligatoires
+            if not all([anonymat_principal, francais, mathematiques, pc_lv2]):
+                messagebox.showerror("Erreur", "Tous les champs doivent être remplis.")
+                return
+
+
 
             self.db_manager.insert_notes_second_tour(numero_table, francais, mathematiques, pc_lv2)
             messagebox.showinfo("Succès", "Les notes du second tour ont été enregistrées avec succès.")

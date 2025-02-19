@@ -8,20 +8,44 @@ class LivretManager:
 
     def ajouter_livret_scolaire(self):
         def enregistrer():
-            num_table = entry_num_table.get()
-            nombre_de_fois = entry_nombre_de_fois.get()
-            moyenne_6e = float(entry_moyenne_6e.get())
-            moyenne_5e = float(entry_moyenne_5e.get())
-            moyenne_4e = float(entry_moyenne_4e.get())
-            moyenne_3e = float(entry_moyenne_3e.get())
+            num_table = entry_num_table.get().strip()
+            nombre_de_fois = entry_nombre_de_fois.get().strip()
+            moyenne_6e = entry_moyenne_6e.get().strip()
+            moyenne_5e = entry_moyenne_5e.get().strip()
+            moyenne_4e = entry_moyenne_4e.get().strip()
+            moyenne_3e = entry_moyenne_3e.get().strip()
+
+            # Vérifier si tous les champs sont remplis
+            if not all([num_table, nombre_de_fois, moyenne_6e, moyenne_5e, moyenne_4e, moyenne_3e]):
+                messagebox.showerror("Erreur", "Tous les champs doivent être remplis.")
+                return
+
+            # Vérifier que toutes les valeurs numériques sont bien des nombres valides
+            if not (moyenne_6e.replace(".", "", 1).isdigit() and
+                    moyenne_5e.replace(".", "", 1).isdigit() and
+                    moyenne_4e.replace(".", "", 1).isdigit() and
+                    moyenne_3e.replace(".", "", 1).isdigit()):
+                messagebox.showerror("Erreur", "Les moyennes doivent être des nombres valides.")
+                return
+
+            # Convertir en float
+            moyenne_6e = float(moyenne_6e)
+            moyenne_5e = float(moyenne_5e)
+            moyenne_4e = float(moyenne_4e)
+            moyenne_3e = float(moyenne_3e)
+
+            # Vérifier que les moyennes sont entre 0 et 20
+            if not all(0 <= note <= 20 for note in [moyenne_6e, moyenne_5e, moyenne_4e, moyenne_3e]):
+                messagebox.showwarning("Erreur", "Les moyennes doivent être comprises entre 0 et 20.")
+                return
 
             moyenne_cycle = (moyenne_6e + moyenne_5e + moyenne_4e + moyenne_3e) / 4
 
-            livret = (
-                num_table, nombre_de_fois, moyenne_6e, moyenne_5e, moyenne_4e, moyenne_3e, moyenne_cycle
-            )
+            livret = (num_table, nombre_de_fois, moyenne_6e, moyenne_5e, moyenne_4e, moyenne_3e, moyenne_cycle)
+
+            # Enregistrement dans la base de données
             self.db_manager.insert_livret_scolaire(livret)
-            messagebox.showinfo("Succès", "Livret scolaire ajouté avec succès")
+            messagebox.showinfo("Succès", "Livret scolaire ajouté avec succès.")
             fenetre.destroy()
 
         fenetre = Tk()

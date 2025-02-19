@@ -10,16 +10,22 @@ class NotesManager:
         self.db_manager = db_manager
         self.anonymat_manager = anonymat_manager
 
-
-
     def ajouter_notes(self):
         def enregistrer():
+            # Vérifier si tous les champs sont remplis
+            for champ, entry in entries.items():
+                if not entry.get().strip():  # Vérifie si le champ est vide ou contient uniquement des espaces
+                    messagebox.showerror("Erreur", f"Le champ '{champ}' est obligatoire.")
+                    return  # Arrête la fonction si un champ est vide
+
+            # Vérifier si l'anonymat principal existe
             anonymat_principal = entries["Anonymat Principal"].get()
             numero_table = self.anonymat_manager.recuperer_numero_table_par_anonymat(anonymat_principal)
             if not numero_table:
                 messagebox.showerror("Erreur", "Anonymat principal non trouvé.")
                 return
 
+            # Si tous les champs sont remplis et l'anonymat est valide, procéder à l'enregistrement
             notes = (
                 numero_table, entries["Composition Français"].get(), entries["Dictée"].get(),
                 entries["Étude de texte"].get(), entries["Instruction Civique"].get(),
@@ -77,6 +83,10 @@ class NotesManager:
         bouton_enregistrer.grid(row=len(champs), column=0, columnspan=2, pady=20)
 
         fenetre.mainloop()
+
+
+
+
 
     def afficher_notes(self):
         """Affiche toutes les notes avec tous les champs de la table."""
