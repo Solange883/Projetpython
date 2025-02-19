@@ -1,12 +1,4 @@
-#ce qui reste
-
-#statistiques(le taux de réussite, la moyenne des notes)
-
-#FICHIER GENEREPDF
-
-
 import sqlite3
-
 from candidat import CandidatManager
 from menu import UI
 from noteSecondTour import NotesSecondTourManager
