@@ -114,26 +114,44 @@ class DatabaseManager:
         result = self.cursor.fetchone()
         return result[0] if result else 0
 
-    def get_moyenne_generale(self):
-        """Calcule la moyenne générale de tous les candidats."""
-
-        self.cursor.execute("""
-              SELECT AVG((`Note CF  ` + `Note Ort  ` + `Note TSQ  ` + `Note IC` + 
-                          `Note HG` + `Note MATH` + `Note PC/LV2` + `Note SVT` + 
-                          `Note ANG1` + `Note ANG2` + `Note EPS` + `Note Ep Fac`) / 12) 
-              FROM Notes
-          """)
-
-        moyenne_generale = self.cursor.fetchone()[0]
-
-        return round(moyenne_generale, 2) if moyenne_generale else 0
-
-        self.conn.commit()
 
     def fetch_statistiques(self):
-        # Exemplede statistique cest a refaire
-        self.cursor.execute("SELECT * FROM Candidats")
-        return {"nombre_candidats": 2, "moyenne_generale": 14.5}
+        """Retourne les statistiques générales comme le nombre total de candidats, la moyenne générale et le taux de réussite."""
+
+        nombre_candidats = self.get_nombre_total_candidats()
+
+        # Vérifier s'il y a des candidats pour éviter une division par zéro
+        if nombre_candidats == 0:
+            return {"nombre_candidats": 0, "moyenne_generale": 0, "taux_reussite": 0}
+
+        # Calcul de la moyenne générale
+        self.cursor.execute("""
+            SELECT AVG(
+                (`Note CF` + `Note Ort` + `Note TSQ` + `Note IC` + `Note HG` +
+                 `Note MATH` + `Note PC/LV2` + `Note SVT` + `Note ANG1` + `Note ANG2` +
+                 `Note EPS` + `Note Ep Fac`) / 11
+            ) FROM Notes
+        """)
+        moyenne_generale = self.cursor.fetchone()[0] or 0  # Évite None si aucune note
+
+        # Calcul du taux de réussite (exemple : réussite si moyenne ≥ 10)
+        self.cursor.execute("""
+            SELECT COUNT(*) FROM Notes
+            WHERE (`Note CF` + `Note Ort` + `Note TSQ` + `Note IC` + `Note HG` +
+                   `Note MATH` + `Note PC/LV2` + `Note SVT` + `Note ANG1` + `Note ANG2` +
+                   `Note EPS` + `Note Ep Fac`) / 11 >= 10
+        """)
+        candidats_admis = self.cursor.fetchone()[0] or 0  # Nombre de candidats ayant une moyenne ≥ 10
+
+        taux_reussite = (candidats_admis / nombre_candidats) * 100 if nombre_candidats > 0 else 0
+
+        return {
+            "nombre_candidats": nombre_candidats,
+            "moyenne_generale": round(moyenne_generale, 2),
+            "taux_reussite": round(taux_reussite, 2)  # Arrondi à 2 décimales
+        }
+
+
 
     def fetch_moyenne_cycle(self, numero_table):
         """Récupère la moy du cycle et le nbre de fois pour un candidat donné."""
