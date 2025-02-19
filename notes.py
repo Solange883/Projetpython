@@ -192,47 +192,105 @@ class NotesManager:
     def gerer_deliberation(self):
         fenetre_deliberation = Tk()
         fenetre_deliberation.title("Délibération des Candidats")
-        fenetre_deliberation.geometry("600x400")
+        fenetre_deliberation.geometry("900x500")
 
-        Label(fenetre_deliberation, text="Délibération des Candidats du Premier Tour", font=("Arial", 14, "bold")).pack(pady=10)
+        Label(fenetre_deliberation, text="Délibération des Candidats - Premier Tour",
+              font=("Arial", 14, "bold")).pack(pady=10)
 
-        Button(fenetre_deliberation, text="Calculer les Résultats", command=self.afficher_resultats_PremierTour, bg="blue",
-               fg="white").pack(pady=10)
+        # Style du tableau
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure("Treeview", background="white", foreground="black", rowheight=25, font=("Arial", 10))
+        style.configure("Treeview.Heading", font=("Arial", 12, "bold"), background="blue", foreground="white")
+        style.map("Treeview", background=[("selected", "#347083")])
 
-        # Zone pour affichager les résultats
-        self.resultat_text = Text(fenetre_deliberation, height=15, width=75)
-        self.resultat_text.pack(pady=10)
+        # Tableau Treeview
+        colonnes = ("Anonymat", "Total", "Bonus EPS", "Bonus Fac.", "Décision")
+        self.tree = ttk.Treeview(fenetre_deliberation, columns=colonnes, show="headings", height=15)
 
-        scrollbar = Scrollbar(fenetre_deliberation, command=self.resultat_text.yview)
-        scrollbar.pack(side="right", fill="y")
-        self.resultat_text.config(yscrollcommand=scrollbar.set)
+        # Définition des colonnes
+        for col in colonnes:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=150, anchor="center")
+
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Boutons
+        bouton_frame = Frame(fenetre_deliberation)
+        bouton_frame.pack(pady=10)
+
+        Button(bouton_frame, text="Calculer Résultats", command=self.afficher_resultats_PremierTour,
+               bg="blue", fg="white", font=("Helvetica", 12, "bold"), padx=10).pack(side=LEFT, padx=10)
+
+        Button(bouton_frame, text="Générer PDF", command=self.generer_pdf_resultats,
+               bg="green", fg="white", font=("Helvetica", 12, "bold"), padx=10).pack(side=LEFT, padx=10)
 
         fenetre_deliberation.mainloop()
 
     def afficher_resultats_PremierTour(self):
-        """affichage resultat deliberation"""
-        self.resultat_text.delete("1.0", "end")  # Efface le texte précédent
+        """Affichage des résultats sous forme de tableau."""
+        self.tree.delete(*self.tree.get_children())  # Nettoyer les anciennes données
 
-        # on récupére tous les anonymatsprincipaux
+        # Récupérer les anonymats principaux
         anonymats = self.anonymat_manager.recuperer_tous_anonymats_principal()
-        anonymat_dict = {str(numero_table): anonymat_principal for numero_table, anonymat_principal in anonymats}  # Dictionnaire danonymats
+        anonymat_dict = {str(numero_table): anonymat_principal for numero_table, anonymat_principal in anonymats}
 
         candidats = self.db_manager.fetch_candidats()
         for candidat in candidats:
-            # Récupérer les notes pour chaque candidat
-            notes = self.db_manager.fetch_notes(candidat[0])  # Utilisez le numéro de table pour récupérer les notes
+            # Récupérer les notes du candidat
+            notes = self.db_manager.fetch_notes(candidat[0])
             notes_obj = Notes(candidat[0], notes)
 
-            # Récupérer l'anonymat principal correspondant au numéro de table du candidat
-            numero_table_candidat = str(candidat[0])  # Assurez-vous que le numéro de table est en chaîne
+            # Récupérer l'anonymat principal
+            numero_table_candidat = str(candidat[0])
             anonymat_principal = anonymat_dict.get(numero_table_candidat, "Inconnu")
 
             # Calculer les résultats
             resultats = notes_obj.calculer_resultats(self.db_manager)
-            resultat_str = (f"Anonymat Principal: {anonymat_principal} | Total: {resultats['total_points']} | "
-                            f"Bonus EPS: {resultats['bonus_eps']} | Bonus Fac.: {resultats['bonus_facultatif']} | "
-                            f"Décision: {resultats['decision']}\n")
-            self.resultat_text.insert("end", resultat_str)
+            self.tree.insert("", "end", values=(
+                anonymat_principal,
+                resultats["total_points"],
+                resultats["bonus_eps"],
+                resultats["bonus_facultatif"],
+                resultats["decision"]
+            ))
+
+    def generer_pdf_resultats(self):
+        """Génère un PDF des résultats sous forme de tableau."""
+        if not self.tree.get_children():
+            messagebox.showerror("Erreur", "Aucun résultat à exporter en PDF.")
+            return
+
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
+        pdf.set_font("Arial", 'B', 14)
+        pdf.cell(200, 10, "Résultats du Premier Tour", ln=True, align="C")
+        pdf.ln(10)
+
+        # En-têtes
+        pdf.set_font("Arial", 'B', 10)
+        colonnes = ["Anonymat", "Total", "Bonus EPS", "Bonus Fac.", "Décision"]
+        largeurs_colonnes = [50, 30, 30, 30, 50]
+
+        for col, largeur in zip(colonnes, largeurs_colonnes):
+            pdf.cell(largeur, 8, col, border=1, align="C")
+        pdf.ln()
+
+        # Ajout des données
+        pdf.set_font("Arial", size=10)
+        for row in self.tree.get_children():
+            values = self.tree.item(row, "values")
+            for value, largeur in zip(values, largeurs_colonnes):
+                pdf.cell(largeur, 8, str(value), border=1, align="C")
+            pdf.ln()
+
+        # Sauvegarde
+        pdf_filename = "resultats_premier_tour.pdf"
+        pdf.output(pdf_filename)
+        messagebox.showinfo("Succès",
+                            f"Le PDF {pdf_filename} a été généré avec succès sur le dossier contenant le projet !")
+
 
 
 

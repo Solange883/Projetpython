@@ -63,10 +63,6 @@ class Notes2:
         self.decision = "Échec"
 
 
-
-
-
-
     def calculer_resultats(self,db_manager):
         self.calcul_total_points()
         self.determiner_decision(db_manager)
