@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import  Scrollbar, Frame, messagebox, ttk
+from fpdf import FPDF
 
 
 class CandidatManager:
@@ -9,7 +10,6 @@ class CandidatManager:
 
     def afficher_candidats(self):
         """Affiche tous les candidats avec tous les champs de la table."""
-
         candidats = self.db_manager.fetch_candidats()  # Récupération des candidats
 
         # Création de la fenêtre principale
@@ -17,7 +17,6 @@ class CandidatManager:
         fenetre_affichage.title("Liste des Candidats")
         fenetre_affichage.geometry("700x450")
         fenetre_affichage.configure(bg="white")
-
 
         # Création d'un frame pour contenir le Treeview et les scrollbars
         frame = Frame(fenetre_affichage)
@@ -51,8 +50,62 @@ class CandidatManager:
         # Placement du tableau dans la fenêtre
         tree.pack(fill="both", expand=True)
 
+        # Ajouter un bouton pour générer le PDF
+        bouton_generer_pdf = Button(fenetre_affichage, text="Générer la liste des candidats en PDF", command=self.generer_pdf,
+                                    font=("Helvetica", 12, "bold"), fg="black", bg="white", padx=10, pady=5)
+        bouton_generer_pdf.pack(pady=10)
+
         # Lancer l'interface
         fenetre_affichage.mainloop()
+
+    def generer_pdf(self):
+        """Génère un fichier PDF avec la liste des candidats."""
+        candidats = self.db_manager.fetch_candidats()  # Récupérer les candidats depuis la base de données
+
+        # Création d'un objet FPDF en mode paysage
+        pdf = FPDF(orientation='L', unit='mm', format='A4')
+        pdf.add_page()
+
+        # Titre du document
+        pdf.set_font("Arial", 'B', 14)
+        pdf.cell(275, 10, txt="Liste des Candidats", ln=True, align="C")
+        pdf.ln(8)  # Ajoute un espace
+
+        # Définition des colonnes avec des largeurs réduites
+        colonnes = [
+            ("Numéro", 18),
+            ("Prénom(s)", 32),
+            ("Nom", 30),
+            ("Naissance", 28),
+            ("Lieu", 28),
+            ("Sexe", 12),
+            ("Type de candidat", 25),
+            ("Établissement", 42),
+            ("Nationalité", 20),
+            ("Sportif", 20),
+            ("Épreuve Fac.", 30)  # Ajusté pour s'assurer qu'elle rentre
+        ]
+
+        # Définition de la police pour les détails
+        pdf.set_font("Arial", size=9)
+
+        # En-tête du tableau
+        for col_name, col_width in colonnes:
+            pdf.cell(col_width, 8, col_name, border=1, align="C")
+        pdf.ln()
+
+        # Ajout des données des candidats
+        for candidat in candidats:
+            for i, (col_name, col_width) in enumerate(colonnes):
+                pdf.cell(col_width, 8, str(candidat[i]), border=1, align="C")
+            pdf.ln()
+
+        # Sauvegarde du fichier PDF
+        pdf.output("Liste_des_candidats.pdf")
+        messagebox.showinfo("Succès", "Le PDF a été généré avec succès sous le nom Liste_des_candidats.pdf !")
+
+
+
 
     def ajouter_candidat(self):
         def enregistrer():

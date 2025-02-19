@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import Tk, Frame, Label, Entry, Button, Canvas, Scrollbar, messagebox,ttk
 from calculrem import Notes
+from fpdf import FPDF
 
 
 
@@ -85,36 +86,37 @@ class NotesManager:
         # Création de la fenêtre principale
         fenetre_affichage = Tk()
         fenetre_affichage.title("Liste des notes")
-        fenetre_affichage.geometry("700x450")
+        fenetre_affichage.geometry("900x500")  # Augmenté pour un meilleur affichage
         fenetre_affichage.configure(bg="white")
 
-
-        # Création d'un frame pour contenir le Treeview et les scrollbars
+        # Création d'un frame centré pour le tableau
         frame = Frame(fenetre_affichage)
-        frame.pack(fill="both", expand=True, padx=10, pady=10)
+        frame.pack(fill="both", expand=True, padx=20, pady=20)
 
         # Définition des colonnes
-        colonnes = ("N° de table" ,
-                  "Note CF  " ,
-                  "Note Ort  " ,
-                  "Note TSQ  "  ,
-                  "Note IC"  ,
-                  "Note HG"  ,
-                  "Note MATH" ,
-                  "Note PC/LV2"  ,
-                  "Note SVT"  ,
-                  "Note ANG1"  ,
-                  "Note ANG2" ,
-                  "Note EPS"  ,
-                  "Note Ep Fac")
+        colonnes = ("N° de table",
+                    "Note CF",
+                    "Note Ort",
+                    "Note TSQ",
+                    "Note IC",
+                    "Note HG",
+                    "Note MATH",
+                    "Note PC/LV2",
+                    "Note SVT",
+                    "Note ANG1",
+                    "Note ANG2",
+                    "Note EPS",
+                    "Note Ep Fac")
 
         # Création du Treeview
         tree = ttk.Treeview(frame, columns=colonnes, show="headings")
 
-        # Définition des en-têtes de colonnes
-        for col in colonnes:
+        # Définition des en-têtes de colonnes avec des largeurs plus grandes
+        largeurs_colonnes = [100, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80]
+
+        for col, largeur in zip(colonnes, largeurs_colonnes):
             tree.heading(col, text=col)  # Nom de la colonne
-            tree.column(col, width=120, anchor="center")  # Largeur des colonnes ajustée
+            tree.column(col, width=largeur, anchor="center")  # Largeur ajustée
 
         # Ajout des données dans le tableau
         for note in notes:
@@ -132,10 +134,50 @@ class NotesManager:
         # Placement du tableau dans la fenêtre
         tree.pack(fill="both", expand=True)
 
+        # Ajouter un bouton pour générer le PDF
+        bouton_generer_pdf = Button(fenetre_affichage, text="Générer la liste des notes en PDF",
+                                    command=self.generer_pdf_notes,
+                                    font=("Helvetica", 12, "bold"), fg="black", bg="white", padx=10, pady=5)
+        bouton_generer_pdf.pack(pady=10)
+
         # Lancer l'interface
         fenetre_affichage.mainloop()
 
+    def generer_pdf_notes(self):
+        """Génère un fichier PDF avec la liste des notes."""
+        notes = self.db_manager.fetch_notes2()  # Récupérer les notes depuis la base de données
 
+        # Création d'un objet FPDF
+        pdf = FPDF(orientation="L", unit="mm", format="A4")  # Mode paysage pour mieux afficher
+        pdf.add_page()
+
+        # Titre du document
+        pdf.set_font("Arial", 'B', 14)
+        pdf.cell(270, 10, txt="Liste des Notes des Candidats", ln=True, align="C")
+        pdf.ln(10)  # Ajoute un espace
+
+        # Définir la police pour les détails
+        pdf.set_font("Arial", size=10)
+
+        # Ajouter les colonnes
+        colonnes = ["N°", "CF", "Ort", "TSQ", "IC", "HG", "MATH", "PC/LV2", "SVT", "ANG1", "ANG2", "EPS", "Ep Fac"]
+        largeurs_colonnes = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
+
+        # En-tête des colonnes
+        for col, largeur in zip(colonnes, largeurs_colonnes):
+            pdf.cell(largeur, 8, col, border=1, align="C")
+        pdf.ln()
+
+        # Ajouter les données des notes
+        for note in notes:
+            for data, largeur in zip(note, largeurs_colonnes):
+                pdf.cell(largeur, 8, str(data), border=1, align="C")
+            pdf.ln()
+
+        # Sauvegarder le fichier PDF
+        pdf.output("Liste_des_notes_premierTour.pdf")
+        messagebox.showinfo("Succès",
+                            "Le PDF des notes (sous le nom Liste_des_notes.pdf) a été généré avec succès sur le dossier du projet !")
 
     def gerer_deliberation(self):
         fenetre_deliberation = Tk()
