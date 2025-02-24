@@ -200,9 +200,14 @@ class DatabaseManager:
         self.conn.commit()
 
     def supprimer_candidat(self, num_table):
-            query = "DELETE FROM Candidats WHERE `N° de table` = ?"
-            self.cursor.execute(query, (num_table,))
-            self.conn.commit()
+            try:
+                self.cursor.execute("DELETE FROM Notes WHERE `N° de table` = ?", (num_table,))
+                self.cursor.execute("DELETE FROM Anonymat WHERE `N° de table` = ?", (num_table,))
+                self.cursor.execute("DELETE FROM Candidats WHERE `N° de table` = ?", (num_table,))
+                self.conn.commit()
+            except Exception as e:
+                self.conn.rollback()  # Annuler en cas d'erreur
+                raise e
 
 
 

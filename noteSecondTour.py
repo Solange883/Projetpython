@@ -177,7 +177,7 @@ class NotesSecondTourManager:
 
 
         Button(fenetre_deliberation, text="Générer PDF", command=self.generer_pdf_resultats_second_tour,
-               bg="green", fg="white", font=("Arial", 10, "bold")).pack(pady=10)
+               bg="blue", fg="white", font=("Arial", 10, "bold")).pack(pady=10)
 
         fenetre_deliberation.mainloop()
 

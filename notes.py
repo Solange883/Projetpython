@@ -205,15 +205,15 @@ class NotesManager:
 
         self.tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-
         bouton_frame = Frame(fenetre_deliberation)
         bouton_frame.pack(pady=10)
 
+
         Button(bouton_frame, text="Calculer Résultats", command=self.afficher_resultats_PremierTour,
-               bg="blue", fg="white", font=("Helvetica", 12, "bold"), padx=10).pack(side=LEFT, padx=10)
+               bg="blue", fg="white", font=("Helvetica", 12, "bold"), padx=10).grid(row=0, column=0, padx=10)
 
         Button(bouton_frame, text="Générer PDF", command=self.generer_pdf_resultats,
-               bg="green", fg="white", font=("Helvetica", 12, "bold"), padx=10).pack(side=LEFT, padx=10)
+               bg="blue", fg="white", font=("Helvetica", 12, "bold"), padx=10).grid(row=0, column=1, padx=10)
 
         fenetre_deliberation.mainloop()
 
