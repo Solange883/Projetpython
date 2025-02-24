@@ -180,69 +180,59 @@ class NotesManager:
                             "Le PDF des notes (sous le nom Liste_des_notes.pdf) a été généré avec succès sur le dossier du projet !")
 
     def gerer_deliberation(self):
-        fenetre_deliberation = Tk()
-        fenetre_deliberation.title("Délibération des Candidats")
-        fenetre_deliberation.geometry("900x500")
+        self.fenetre_deliberation = Tk()
+        self.fenetre_deliberation.title("Délibération des Candidats")
+        self.fenetre_deliberation.geometry("600x400")
 
-        Label(fenetre_deliberation, text="Délibération des Candidats - Premier Tour",
+        Label(self.fenetre_deliberation, text="Délibération des Candidats du Premier Tour",
               font=("Arial", 14, "bold")).pack(pady=10)
 
+        Button(self.fenetre_deliberation, text="Calculer les Résultats", command=self.afficher_resultats_PremierTour,
+               bg="blue", fg="white", font=("Arial", 10, "bold")).pack(pady=10)
 
-        style = ttk.Style()
-        style.theme_use("clam")
-        style.configure("Treeview", background="white", foreground="black", rowheight=25, font=("Arial", 10))
-        style.configure("Treeview.Heading", font=("Arial", 12, "bold"), background="blue", foreground="white")
-        style.map("Treeview", background=[("selected", "#347083")])
+        self.resultat_text = Text(self.fenetre_deliberation, height=15, width=75)
+        self.resultat_text.pack(pady=10)
 
+        scrollbar = Scrollbar(self.fenetre_deliberation, command=self.resultat_text.yview)
+        scrollbar.pack(side="right", fill="y")
+        self.resultat_text.config(yscrollcommand=scrollbar.set)
 
-        colonnes = ("Anonymat", "Total", "Bonus EPS", "Bonus Fac.", "Décision")
-        self.tree = ttk.Treeview(fenetre_deliberation, columns=colonnes, show="headings", height=15)
+        Button(self.fenetre_deliberation, text="Générer PDF", command=self.generer_pdf_resultats,
+               bg="blue", fg="white", font=("Arial", 10, "bold")).pack(pady=10)
 
-
-        for col in colonnes:
-            self.tree.heading(col, text=col)
-            self.tree.column(col, width=150, anchor="center")
-
-        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
-
-        bouton_frame = Frame(fenetre_deliberation)
-        bouton_frame.pack(pady=10)
-
-
-        Button(bouton_frame, text="Calculer Résultats", command=self.afficher_resultats_PremierTour,
-               bg="blue", fg="white", font=("Helvetica", 12, "bold"), padx=10).grid(row=0, column=0, padx=10)
-
-        Button(bouton_frame, text="Générer PDF", command=self.generer_pdf_resultats,
-               bg="blue", fg="white", font=("Helvetica", 12, "bold"), padx=10).grid(row=0, column=1, padx=10)
-
-        fenetre_deliberation.mainloop()
+        self.fenetre_deliberation.mainloop()
 
     def afficher_resultats_PremierTour(self):
-        self.tree.delete(*self.tree.get_children())
-
+        self.resultat_text.delete("1.0", "end")
 
         anonymats = self.anonymat_manager.recuperer_tous_anonymats_principal()
-        anonymat_dict = {str(numero_table): anonymat_principal for numero_table, anonymat_principal in anonymats}
+        anonymat_dict = {str(numero_table): str(anonymat_principal).strip() for numero_table, anonymat_principal in
+                         anonymats}
 
         candidats = self.db_manager.fetch_candidats()
         for candidat in candidats:
-            notes = self.db_manager.fetch_notes(candidat[0])
-            notes_obj = Notes(candidat[0], notes)
-
             numero_table_candidat = str(candidat[0])
-            anonymat_principal = anonymat_dict.get(numero_table_candidat, "Inconnu")
+            anonymat_principal = anonymat_dict.get(numero_table_candidat, "Inconnu").strip()
 
+            notes = self.db_manager.fetch_notes(candidat[0])
+            if not notes:
+                continue
+
+            notes_obj = Notes(candidat[0], notes)
             resultats = notes_obj.calculer_resultats(self.db_manager)
-            self.tree.insert("", "end", values=(
-                anonymat_principal,
-                resultats["total_points"],
-                resultats["bonus_eps"],
-                resultats["bonus_facultatif"],
-                resultats["decision"]
-            ))
+
+            resultat_str = (f"Anonymat: {anonymat_principal} | "
+                            f"Total: {resultats['total_points']} | "
+                            f"Bonus EPS: {resultats['bonus_eps']} | "
+                            f"Bonus Fac.: {resultats['bonus_facultatif']} | "
+                            f"Décision: {resultats['decision']}\n")
+            self.resultat_text.insert("end", resultat_str)
+
+        if not self.resultat_text.get("1.0", "end-1c").strip():
+            self.resultat_text.insert("end", "Aucun candidat trouvé pour le premier tour.\n")
 
     def generer_pdf_resultats(self):
-        if not self.tree.get_children():
+        if not self.resultat_text.get("1.0", "end-1c").strip():
             messagebox.showerror("Erreur", "Aucun résultat à exporter en PDF.")
             return
 
@@ -253,7 +243,6 @@ class NotesManager:
         pdf.cell(200, 10, "Résultats du Premier Tour", ln=True, align="C")
         pdf.ln(10)
 
-
         pdf.set_font("Arial", 'B', 10)
         colonnes = ["Anonymat", "Total", "Bonus EPS", "Bonus Fac.", "Décision"]
         largeurs_colonnes = [50, 30, 30, 30, 50]
@@ -263,18 +252,12 @@ class NotesManager:
         pdf.ln()
 
         pdf.set_font("Arial", size=10)
-        for row in self.tree.get_children():
-            values = self.tree.item(row, "values")
+        for row in self.resultat_text.get("1.0", "end-1c").splitlines():
+            values = row.split('|')
             for value, largeur in zip(values, largeurs_colonnes):
-                pdf.cell(largeur, 8, str(value), border=1, align="C")
+                pdf.cell(largeur, 8, str(value).strip(), border=1, align="C")
             pdf.ln()
-
 
         pdf_filename = "resultats_premier_tour.pdf"
         pdf.output(pdf_filename)
-        messagebox.showinfo("Succès",
-                            f"Le PDF {pdf_filename} a été généré avec succès sur le dossier contenant le projet !")
-
-
-
-
+        messagebox.showinfo("Succès", f"Le PDF {pdf_filename} a été généré avec succès dans le dossier du projet !")
