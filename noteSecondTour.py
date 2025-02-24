@@ -15,23 +15,20 @@ class NotesSecondTourManager:
         self.anonymats_second_tour = self.recuperer_anonymats_second_tour()
 
     def recuperer_anonymats_second_tour(self):
-        """Récupère la liste des anonymats des candidats admissible au second tour."""
         anonymats_admissibles = set()
 
 
-        # Récupérer les anonymats principaux
         anonymats = self.anonymat_manager.recuperer_tous_anonymats_principal()
         anonymat_dict = {str(numero_table): str(anonymat_principal).strip() for numero_table, anonymat_principal in anonymats}
 
 
-        # Récupérer les candidats et leurs notes
+
         candidats = self.db_manager.fetch_candidats()
         for candidat in candidats:
             notes = self.db_manager.fetch_notes(candidat[0])
             notes_obj = Notes(candidat[0], notes)
             resultats = notes_obj.calculer_resultats(self.db_manager)
 
-            # Vérifier si le candidat est admissible au second tour
             if resultats['decision'] in ["Repêchable d'office","Passage au second tour","Repêchable au second tour"]:
                 numero_table_candidat = str(candidat[0])
                 anonymat_admissible = anonymat_dict.get(numero_table_candidat, None)
@@ -45,10 +42,7 @@ class NotesSecondTourManager:
         def enregistrer():
             anonymat_principal = entry_anonymat_principal.get().strip()
 
-
-            # Convertir en chaîne de caractères
             anonymat_principal = str(anonymat_principal)
-
 
 
             if anonymat_principal not in self.anonymats_second_tour:
@@ -69,11 +63,10 @@ class NotesSecondTourManager:
                 messagebox.showwarning("Erreur", "Les notes doivent être comprises entre 0 et 20.")
                 return
 
-            # Vérification des champs obligatoires
+
             if not all([anonymat_principal, francais, mathematiques, pc_lv2]):
                 messagebox.showerror("Erreur", "Tous les champs doivent être remplis.")
                 return
-
 
 
             self.db_manager.insert_notes_second_tour(numero_table, francais, mathematiques, pc_lv2)
@@ -117,36 +110,31 @@ class NotesSecondTourManager:
 
 
     def afficher_notes_second_tour(self):
-        """Affiche toutes les notes avec tous les champs de la table et ajoute un bouton pour générer le PDF."""
-
         notes = self.db_manager.fetch_notes_second_tour_2()
 
-        # Création de la fenêtre principale
+
         fenetre_affichage = Tk()
         fenetre_affichage.title("Liste des notes du 2nd tour")
         fenetre_affichage.geometry("700x450")
         fenetre_affichage.configure(bg="white")
 
-        # Création d'un frame pour contenir le Treeview et les scrollbars
         frame = Frame(fenetre_affichage)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Définition des colonnes
+
         colonnes = ("N° de table", "Note CF", "Note MATH", "Note PC/LV2")
 
-        # Création du Treeview
         self.tree = ttk.Treeview(frame, columns=colonnes, show="headings")
 
-        # Définition des en-têtes de colonnes
+
         for col in colonnes:
             self.tree.heading(col, text=col)  # Nom de la colonne
             self.tree.column(col, width=120, anchor="center")  # Largeur des colonnes ajustée
 
-        # Ajout des données dans le tableau
+
         for note in notes:
             self.tree.insert("", "end", values=note)
 
-        # Scrollbars
         scrollbar_y = Scrollbar(frame, orient="vertical", command=self.tree.yview)
         scrollbar_y.pack(side="right", fill="y")
         self.tree.configure(yscrollcommand=scrollbar_y.set)
@@ -155,10 +143,10 @@ class NotesSecondTourManager:
         scrollbar_x.pack(side="bottom", fill="x")
         self.tree.configure(xscrollcommand=scrollbar_x.set)
 
-        # Placement du tableau dans la fenêtre
+
         self.tree.pack(fill="both", expand=True)
 
-        # Bouton pour générer le PDF
+
         bouton_pdf = Button(fenetre_affichage, text="Générer les notes du 2nd tour en PDF", command=self.generer_pdf_notes_second_tour,
                             bg="green", fg="white", font=("Helvetica", 12, "bold"), padx=10)
         bouton_pdf.pack(pady=10)
@@ -166,40 +154,7 @@ class NotesSecondTourManager:
         # Lancer l'interface
         fenetre_affichage.mainloop()
 
-    def generer_pdf_notes_second_tour(self):
-        """Génère un PDF contenant les notes du second tour."""
-        if not self.tree.get_children():
-            messagebox.showerror("Erreur", "Aucune note à exporter en PDF.")
-            return
 
-        pdf = FPDF()
-        pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.add_page()
-        pdf.set_font("Arial", 'B', 14)
-        pdf.cell(200, 10, "Notes du Second Tour", ln=True, align="C")
-        pdf.ln(10)
-
-        # En-têtes
-        pdf.set_font("Arial", 'B', 10)
-        colonnes = ["N° de table", "Note CF", "Note MATH", "Note PC/LV2"]
-        largeurs_colonnes = [40, 40, 40, 40]
-
-        for col, largeur in zip(colonnes, largeurs_colonnes):
-            pdf.cell(largeur, 8, col, border=1, align="C")
-        pdf.ln()
-
-        # Ajout des données
-        pdf.set_font("Arial", size=10)
-        for row in self.tree.get_children():
-            values = self.tree.item(row, "values")
-            for value, largeur in zip(values, largeurs_colonnes):
-                pdf.cell(largeur, 8, str(value), border=1, align="C")
-            pdf.ln()
-
-        # Sauvegarde
-        pdf_filename = "notes_second_tour.pdf"
-        pdf.output(pdf_filename)
-        messagebox.showinfo("Succès", f"Le PDF {pdf_filename} a été généré avec succès.")
 
     def gerer_deliberation(self):
         fenetre_deliberation = Tk()
@@ -212,7 +167,7 @@ class NotesSecondTourManager:
         Button(fenetre_deliberation, text="Calculer les Résultats", command=self.afficher_resultats_second_tour,
                bg="blue", fg="white").pack(pady=10)
 
-        # Zone d'affichage des résultats
+
         self.resultat_text = Text(fenetre_deliberation, height=15, width=75)
         self.resultat_text.pack(pady=10)
 
@@ -220,7 +175,7 @@ class NotesSecondTourManager:
         scrollbar.pack(side="right", fill="y")
         self.resultat_text.config(yscrollcommand=scrollbar.set)
 
-        # Bouton pour générer le PDF
+
         Button(fenetre_deliberation, text="Générer PDF", command=self.generer_pdf_resultats_second_tour,
                bg="green", fg="white", font=("Arial", 10, "bold")).pack(pady=10)
 
@@ -229,16 +184,16 @@ class NotesSecondTourManager:
     def afficher_resultats_second_tour(self):
         self.resultat_text.delete("1.0", "end")  # Efface les résultats précédents
 
-        # Récupérer les anonymats des candidats admissibles
+
         anonymats_admissibles = self.recuperer_anonymats_second_tour()
         anonymats_admissibles = {anonymat.strip() for anonymat in anonymats_admissibles}
 
-        # Récupérer tous les anonymats principaux
+
         anonymats = self.anonymat_manager.recuperer_tous_anonymats_principal()
         anonymat_dict = {str(numero_table): str(anonymat_principal).strip() for numero_table, anonymat_principal in
                          anonymats}
 
-        # Récupérer tous les candidats
+
         self.resultats_list = []
         candidats = self.db_manager.fetch_candidats()
 
@@ -261,13 +216,12 @@ class NotesSecondTourManager:
                 self.resultat_text.insert("end", resultat_str)
                 self.resultats_list.append((anonymat_principal, resultats['total_points'], resultats['decision']))
 
-        # Afficher un message si aucun candidat n'est admissible
+
         if not self.resultat_text.get("1.0", "end-1c").strip():
             self.resultat_text.insert("end", "Aucun candidat admissible au second tour.\n")
 
 
     def generer_pdf_resultats_second_tour(self):
-        """Génère un PDF contenant les résultats du second tour."""
         if not self.resultats_list:
             messagebox.showerror("Erreur", "Aucun résultat à exporter en PDF.")
             return
@@ -279,7 +233,6 @@ class NotesSecondTourManager:
         pdf.cell(200, 10, "Résultats du Second Tour", ln=True, align="C")
         pdf.ln(10)
 
-        # En-têtes
         pdf.set_font("Arial", 'B', 10)
         colonnes = ["Anonymat", "Total Points", "Décision"]
         largeurs_colonnes = [50, 40, 60]
@@ -288,7 +241,7 @@ class NotesSecondTourManager:
             pdf.cell(largeur, 8, col, border=1, align="C")
         pdf.ln()
 
-        # Ajout des résultats
+
         pdf.set_font("Arial", size=10)
         for anonymat, total, decision in self.resultats_list:
             pdf.cell(50, 8, str(anonymat), border=1, align="C")
@@ -296,7 +249,7 @@ class NotesSecondTourManager:
             pdf.cell(60, 8, decision, border=1, align="C")
             pdf.ln()
 
-        # Sauvegarde
+
         pdf_filename = "resultats_second_tour.pdf"
         pdf.output(pdf_filename)
         messagebox.showinfo("Succès", f"Le PDF {pdf_filename} a été généré avec succès sur le dossier du projet !")

@@ -39,27 +39,25 @@ class Notes2:
 
 
     def determiner_decision(self, db_manager):
-        """Détermine la décision en fonction des règles métiers."""
 
-        # Récupérer la moyenne du cycle depuis la table LivretScolaire
         self.moyenne_cycle ,self.nbre_fois= db_manager.fetch_moyenne_cycle(self.numero_table)
 
-        # RM11 : Admis si total_points >= 80
+
         if self.total_points >= 80:
             self.decision = "Admis"
             return
 
-        # RM12 : Vérifier si le candidat a passé le BFEM plus de 2 fois
+
         if self.nbre_fois > 2:
             self.decision = "Échec"
             return
 
-        # RM11 : Repêchable si 76 <= total_points < 80
+
         if 76 <= self.total_points < 80:
             self.decision = "Repêchable pour passer le second tour"
             return
 
-        # Si total_points < 76, le candidat est éliminé
+
         self.decision = "Échec"
 
 

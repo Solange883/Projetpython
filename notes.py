@@ -12,20 +12,18 @@ class NotesManager:
 
     def ajouter_notes(self):
         def enregistrer():
-            # Vérifier si tous les champs sont remplis
             for champ, entry in entries.items():
-                if not entry.get().strip():  # Vérifie si le champ est vide ou contient uniquement des espaces
+                if not entry.get().strip():
                     messagebox.showerror("Erreur", f"Le champ '{champ}' est obligatoire.")
-                    return  # Arrête la fonction si un champ est vide
+                    return
 
-            # Vérifier si l'anonymat principal existe
             anonymat_principal = entries["Anonymat Principal"].get()
             numero_table = self.anonymat_manager.recuperer_numero_table_par_anonymat(anonymat_principal)
             if not numero_table:
                 messagebox.showerror("Erreur", "Anonymat principal non trouvé.")
                 return
 
-            # Si tous les champs sont remplis et l'anonymat est valide, procéder à l'enregistrement
+
             notes = (
                 numero_table, entries["Composition Français"].get(), entries["Dictée"].get(),
                 entries["Étude de texte"].get(), entries["Instruction Civique"].get(),
@@ -44,7 +42,7 @@ class NotesManager:
 
         Label(fenetre, text="Ajout des Notes", bg="#f0f8ff", fg="blue", font=("Helvetica", 14, "bold")).pack(pady=10)
 
-        # Création du Canvas et de la Scrollbar
+
         cadre_canvas = Frame(fenetre, bg="#f0f8ff")
         cadre_canvas.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -89,21 +87,17 @@ class NotesManager:
 
 
     def afficher_notes(self):
-        """Affiche toutes les notes avec tous les champs de la table."""
 
         notes = self.db_manager.fetch_notes2()
 
-        # Création de la fenêtre principale
         fenetre_affichage = Tk()
         fenetre_affichage.title("Liste des notes")
-        fenetre_affichage.geometry("900x500")  # Augmenté pour un meilleur affichage
+        fenetre_affichage.geometry("900x500")
         fenetre_affichage.configure(bg="white")
 
-        # Création d'un frame centré pour le tableau
         frame = Frame(fenetre_affichage)
         frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Définition des colonnes
         colonnes = ("N° de table",
                     "Note CF",
                     "Note Ort",
@@ -118,21 +112,20 @@ class NotesManager:
                     "Note EPS",
                     "Note Ep Fac")
 
-        # Création du Treeview
+
         tree = ttk.Treeview(frame, columns=colonnes, show="headings")
 
-        # Définition des en-têtes de colonnes avec des largeurs plus grandes
         largeurs_colonnes = [100, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80]
 
         for col, largeur in zip(colonnes, largeurs_colonnes):
             tree.heading(col, text=col)  # Nom de la colonne
             tree.column(col, width=largeur, anchor="center")  # Largeur ajustée
 
-        # Ajout des données dans le tableau
+
         for note in notes:
             tree.insert("", "end", values=note)
 
-        # Scrollbars
+
         scrollbar_y = Scrollbar(frame, orient="vertical", command=tree.yview)
         scrollbar_y.pack(side="right", fill="y")
         tree.configure(yscrollcommand=scrollbar_y.set)
@@ -141,50 +134,47 @@ class NotesManager:
         scrollbar_x.pack(side="bottom", fill="x")
         tree.configure(xscrollcommand=scrollbar_x.set)
 
-        # Placement du tableau dans la fenêtre
+
         tree.pack(fill="both", expand=True)
 
-        # Ajouter un bouton pour générer le PDF
         bouton_generer_pdf = Button(fenetre_affichage, text="Générer la liste des notes en PDF",
                                     command=self.generer_pdf_notes,
                                     font=("Helvetica", 12, "bold"), fg="black", bg="white", padx=10, pady=5)
         bouton_generer_pdf.pack(pady=10)
 
-        # Lancer l'interface
+
         fenetre_affichage.mainloop()
 
     def generer_pdf_notes(self):
-        """Génère un fichier PDF avec la liste des notes."""
-        notes = self.db_manager.fetch_notes2()  # Récupérer les notes depuis la base de données
+        notes = self.db_manager.fetch_notes2()
 
-        # Création d'un objet FPDF
         pdf = FPDF(orientation="L", unit="mm", format="A4")  # Mode paysage pour mieux afficher
         pdf.add_page()
 
-        # Titre du document
+
         pdf.set_font("Arial", 'B', 14)
         pdf.cell(270, 10, txt="Liste des Notes des Candidats", ln=True, align="C")
         pdf.ln(10)  # Ajoute un espace
 
-        # Définir la police pour les détails
+
         pdf.set_font("Arial", size=10)
 
-        # Ajouter les colonnes
+
         colonnes = ["N°", "CF", "Ort", "TSQ", "IC", "HG", "MATH", "PC/LV2", "SVT", "ANG1", "ANG2", "EPS", "Ep Fac"]
         largeurs_colonnes = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20]
 
-        # En-tête des colonnes
+
         for col, largeur in zip(colonnes, largeurs_colonnes):
             pdf.cell(largeur, 8, col, border=1, align="C")
         pdf.ln()
 
-        # Ajouter les données des notes
+
         for note in notes:
             for data, largeur in zip(note, largeurs_colonnes):
                 pdf.cell(largeur, 8, str(data), border=1, align="C")
             pdf.ln()
 
-        # Sauvegarder le fichier PDF
+
         pdf.output("Liste_des_notes_premierTour.pdf")
         messagebox.showinfo("Succès",
                             "Le PDF des notes (sous le nom Liste_des_notes.pdf) a été généré avec succès sur le dossier du projet !")
@@ -197,25 +187,25 @@ class NotesManager:
         Label(fenetre_deliberation, text="Délibération des Candidats - Premier Tour",
               font=("Arial", 14, "bold")).pack(pady=10)
 
-        # Style du tableau
+
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("Treeview", background="white", foreground="black", rowheight=25, font=("Arial", 10))
         style.configure("Treeview.Heading", font=("Arial", 12, "bold"), background="blue", foreground="white")
         style.map("Treeview", background=[("selected", "#347083")])
 
-        # Tableau Treeview
+
         colonnes = ("Anonymat", "Total", "Bonus EPS", "Bonus Fac.", "Décision")
         self.tree = ttk.Treeview(fenetre_deliberation, columns=colonnes, show="headings", height=15)
 
-        # Définition des colonnes
+
         for col in colonnes:
             self.tree.heading(col, text=col)
             self.tree.column(col, width=150, anchor="center")
 
         self.tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # Boutons
+
         bouton_frame = Frame(fenetre_deliberation)
         bouton_frame.pack(pady=10)
 
@@ -228,24 +218,20 @@ class NotesManager:
         fenetre_deliberation.mainloop()
 
     def afficher_resultats_PremierTour(self):
-        """Affichage des résultats sous forme de tableau."""
-        self.tree.delete(*self.tree.get_children())  # Nettoyer les anciennes données
+        self.tree.delete(*self.tree.get_children())
 
-        # Récupérer les anonymats principaux
+
         anonymats = self.anonymat_manager.recuperer_tous_anonymats_principal()
         anonymat_dict = {str(numero_table): anonymat_principal for numero_table, anonymat_principal in anonymats}
 
         candidats = self.db_manager.fetch_candidats()
         for candidat in candidats:
-            # Récupérer les notes du candidat
             notes = self.db_manager.fetch_notes(candidat[0])
             notes_obj = Notes(candidat[0], notes)
 
-            # Récupérer l'anonymat principal
             numero_table_candidat = str(candidat[0])
             anonymat_principal = anonymat_dict.get(numero_table_candidat, "Inconnu")
 
-            # Calculer les résultats
             resultats = notes_obj.calculer_resultats(self.db_manager)
             self.tree.insert("", "end", values=(
                 anonymat_principal,
@@ -256,7 +242,6 @@ class NotesManager:
             ))
 
     def generer_pdf_resultats(self):
-        """Génère un PDF des résultats sous forme de tableau."""
         if not self.tree.get_children():
             messagebox.showerror("Erreur", "Aucun résultat à exporter en PDF.")
             return
@@ -268,7 +253,7 @@ class NotesManager:
         pdf.cell(200, 10, "Résultats du Premier Tour", ln=True, align="C")
         pdf.ln(10)
 
-        # En-têtes
+
         pdf.set_font("Arial", 'B', 10)
         colonnes = ["Anonymat", "Total", "Bonus EPS", "Bonus Fac.", "Décision"]
         largeurs_colonnes = [50, 30, 30, 30, 50]
@@ -277,7 +262,6 @@ class NotesManager:
             pdf.cell(largeur, 8, col, border=1, align="C")
         pdf.ln()
 
-        # Ajout des données
         pdf.set_font("Arial", size=10)
         for row in self.tree.get_children():
             values = self.tree.item(row, "values")
@@ -285,7 +269,7 @@ class NotesManager:
                 pdf.cell(largeur, 8, str(value), border=1, align="C")
             pdf.ln()
 
-        # Sauvegarde
+
         pdf_filename = "resultats_premier_tour.pdf"
         pdf.output(pdf_filename)
         messagebox.showinfo("Succès",

@@ -1,17 +1,17 @@
 import sqlite3
 import pandas as pd
 
-# Charger le fichier Excel dans un DataFrame
+
 df = pd.read_excel("BD_BFEM.xlsx")
 
-# Convertir la date de naissance pour supprimer l'heure
+
 df['Date de nais.'] = pd.to_datetime(df['Date de nais.']).dt.date
 
 
-# Connexion à la base de données SQLite
+
 conn = sqlite3.connect("BD_BFEM.sqlite")
 
-# Créer le curseur
+
 cursor = conn.cursor()
 
 
@@ -35,7 +35,6 @@ df_notes = df[[
 df_notes.to_sql("Notes", conn, if_exists="replace", index=False)
 
 
-# Vérification de toutes les tablesexistantes
 cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
 print("Tables existantes :", cursor.fetchall())
 

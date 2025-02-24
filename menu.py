@@ -17,7 +17,6 @@ class UI:
         fenetre.title("Gestion des Candidats")
         fenetre.configure(bg="white")
 
-        # Titre principal
         Label(fenetre, text="Gestion des Candidats", font=("Helvetica", 16, "bold"), fg="blue", bg="#f0f8ff").grid(
             row=0, column=0, columnspan=2, pady=20
         )
@@ -32,10 +31,9 @@ class UI:
             "bd": 3,
             "highlightbackground": "blue",
             "highlightthickness": 2,
-            "width": 20  # Largeur fixe pour tous les boutons
+            "width": 20
         }
 
-        # Liste des boutons avec leurs commandes
         boutons = [
             ("Ajouter Candidat", self.candidat_manager.ajouter_candidat),
             ("Afficher Candidats", self.candidat_manager.afficher_candidats),
@@ -52,10 +50,9 @@ class UI:
             ("Délibération 2eme Tour", self.notes_second_tour_manager.gerer_deliberation)
         ]
 
-        # Placement des boutons en 2 colonnes
         for i, (texte, commande) in enumerate(boutons):
-            row = (i // 2) + 1  # Ligne calculée en fonction de l'index
-            column = i % 2  # Colonne alternée (0 ou 1)
+            row = (i // 2) + 1
+            column = i % 2
             Button(fenetre, text=texte, command=commande, **bouton_style).grid(
                 row=row, column=column, padx=10, pady=5
             )
@@ -63,7 +60,5 @@ class UI:
         fenetre.mainloop()
 
     def demarrer_application(self):
-            """Démarre l'application avec la page du jury."""
-            # Crée la page du jury et passe une fonction pour naviguer vers la page principale
             jury_page = JuryPage(on_submit=self.creer_page_principale)
             jury_page.ouvrir_formulaire_jury()

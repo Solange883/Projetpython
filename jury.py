@@ -1,50 +1,62 @@
 
-from tkinter import Tk, Label, Entry, Button, messagebox, font, Frame
+from tkinter import Tk, Label, Entry, Button, messagebox, font, Frame, Image, Canvas
+
+from PIL import Image, ImageTk
+
 
 
 class JuryPage:
     def __init__(self, on_submit):
-        self.on_submit = on_submit  # Fonction à appeler lorsque le formulaire est soumis
+        self.on_submit = on_submit
 
     def ouvrir_formulaire_jury(self):
-        """Ouvre une fenêtre avec un message d'accueil et un bouton de connexion stylisé"""
+
         fenetre = Tk()
         fenetre.title("Page d'accueil")
-        fenetre.geometry("600x400")  # Taille de la fenêtre
-        fenetre.configure(bg="#f0f0f0")  # Couleur de fond de la fenêtre
+        fenetre.geometry("600x400")
 
-        # Style de police pour le texte et les boutons
+        image_fond = Image.open("image.jpg")
+        fond_image = ImageTk.PhotoImage(image_fond)
+
+        canvas = Canvas(fenetre, width=600, height=400)
+        canvas.pack(fill="both", expand=True)
+
+        image_on_canvas = canvas.create_image(300, 200, anchor="center", image=fond_image)
+
+
         title_font = font.Font(family="Helvetica", size=14, weight="bold")
+
+
+        text_on_canvas = canvas.create_text(300, 120,
+                                            text="Bienvenue sur le logiciel destiné à la gestion des données et à la délibération des candidats lors de l'examen du BFEM au Sénégal",
+                                            width=500, justify="center", fill="black", font=title_font)
+
+        def resize_elements(event):
+            new_width = event.width
+            new_height = event.height
+
+
+            canvas.coords(image_on_canvas, new_width // 2, new_height // 2)
+
+            resized_image = image_fond.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            canvas.image = ImageTk.PhotoImage(resized_image)
+            canvas.itemconfig(image_on_canvas, image=canvas.image)
+
+            canvas.coords(text_on_canvas, new_width // 2, new_height // 4)
+
+        canvas.bind("<Configure>", resize_elements)
+
         button_font = font.Font(family="Helvetica", size=12, weight="bold")
+        bouton_connexion = Button(
+            fenetre, text="Se connecter", command=self.ajouter_jury,
+            bg="white", fg="black", font=button_font, padx=20, pady=10,
+            relief="flat", bd=0, highlightbackground="#007BFF",
+            highlightthickness=2, activebackground="#0056b3", activeforeground="white",
+        )
+        bouton_connexion.place(relx=0.5, rely=0.6, anchor="center")  # Position du bouton
 
-        # Message d'accueil stylisé
-        Label(
-            fenetre,
-            text="Logiciel destiné à la gestion des données et à la délibération des candidats lors de l'examen du BFEM au Sénégal",
-            wraplength=500,  # Largeur maximale du texte avant retour à la ligne
-            justify="center",  # Centrer le texte
-            bg="#f0f0f0",  # Couleur de fond du label
-            fg="#333333",  # Couleur du texte
-            font=title_font  # Police personnalisée
-        ).pack(pady=50)
-
-        # Bouton "Se connecter" stylisé
-        Button(
-            fenetre,
-            text="Se connecter",
-            command=self.ajouter_jury,
-            bg="blue",  # Couleur de fond du bouton
-            fg="white",  # Couleur du texte
-            font=button_font,  # Police personnalisée
-            padx=20,  # Espacement horizontal
-            pady=10,  # Espacement vertical
-            relief="flat",  # Style de bordure (flat pour un look moderne)
-            bd=0,  # Pas de bordure supplémentaire
-            highlightbackground="#4CAF50",  # Couleur de la bordure
-            highlightthickness=2,  # Épaisseur de la bordure
-            activebackground="#45a049",  # Couleur de fond au clic
-            activeforeground="white"  # Couleur du texte au clic
-        ).pack(pady=20)
+        bouton_connexion.bind("<Enter>", lambda e: bouton_connexion.config(bg="blue"))
+        bouton_connexion.bind("<Leave>", lambda e: bouton_connexion.config(bg="white"))
 
         fenetre.mainloop()
 

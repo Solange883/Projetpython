@@ -34,7 +34,7 @@ class Notes:
 
 
     def calcul_bonus(self):
-       #bonus de leps et epreuvefac
+
         eps = self.notes.get("eps", 0)  # Note EPS
         epreuve_fac = self.notes.get("epreuve_fac", 0)
 
@@ -73,37 +73,34 @@ class Notes:
         self.total_points = total + self.bonus_eps + self.bonus_facultatif
 
     def determiner_decision(self, db_manager):
-        """Détermine la décision en fonction des règles métiers."""
 
-        # Récupérer la moyenne du cycle depuis la table LivretScolaire
+
         self.moyenne_cycle ,self.nbre_fois= db_manager.fetch_moyenne_cycle(self.numero_table)
 
-        # RM8 : Repêchable d'office si total_points est entre 171 et 179,9
+
         if 171 <= self.total_points < 180:
             self.decision = "Repêchable d'office"
             return
 
-        # RM9 : Repêchable au 2nd tour si total_points est entre 144 et 152,9
         if 144 <= self.total_points < 153:
             self.decision = "Repêchable au second tour"
             return
 
-        # RM4 : Admis d'office si total_points >= 180
+
         if self.total_points >= 180:
             self.decision = "Admis d'office"
             return
 
-        # RM5 : Passage au 2nd tour si total_points >= 153
+
         if self.total_points >= 153:
             self.decision = "Passage au second tour"
             return
 
-        # RM6 : Échec si total_points < 153
         if self.total_points < 153:
             self.decision = "Échec"
             return
 
-        # RM7 : Repêchage basé sur la moyenne du cycle (si moyenne_cycle >= 12)
+
         if self.moyenne_cycle is not None and self.moyenne_cycle >= 12:
             self.decision += "(Repêchable)"
 

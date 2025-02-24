@@ -30,7 +30,7 @@ class DatabaseManager:
             `Epreuve Facultative` TEXT
         )''')
 
-        # Table du livret scolaire
+
         self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS LivretScolaire (
                     `N° de table` INTEGER  ,
@@ -44,7 +44,6 @@ class DatabaseManager:
                 )
             ''')
 
-        # Table des notes
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS Notes (
                   `N° de table` INTEGER PRIMARY KEY,
@@ -64,7 +63,6 @@ class DatabaseManager:
             )
         ''')
 
-        # Table des anonymats
         self.cursor.execute('''
                 CREATE TABLE IF NOT EXISTS Anonymat (
                     `N° de table` INTEGER  PRIMARY KEY,
@@ -74,7 +72,7 @@ class DatabaseManager:
                 )
             ''')
 
-        # Table des notes Second Tour
+
         self.cursor.execute('''
                     CREATE TABLE IF NOT EXISTS Notes_Second_Tour  (
                           `N° de table` INTEGER PRIMARY KEY,
@@ -109,15 +107,12 @@ class DatabaseManager:
         return self.cursor.fetchall()
 
     def get_nombre_total_candidats(self):
-        """Retourne le nombre total de candidats dans la base de données."""
         self.cursor.execute("SELECT COUNT(*) FROM Candidats")
         result = self.cursor.fetchone()
         return result[0] if result else 0
 
     def get_taux_reussite(self):
-        """Calcule le taux de réussite."""
 
-        # Compter les candidats admis
         self.cursor.execute("""
               SELECT COUNT(*) FROM Notes
               WHERE (
@@ -132,7 +127,6 @@ class DatabaseManager:
         return f"{round((candidats_admis / total_candidats) * 100, 2)}%" if total_candidats > 0 else "0%"
 
     def get_moyenne_generale(self):
-        """Calcule la moyenne générale de tous les candidats."""
 
         self.cursor.execute("""
               SELECT AVG(("Note CF" + "Note Ort" + "Note TSQ" + "Note IC" + 
@@ -146,7 +140,6 @@ class DatabaseManager:
         return round(moyenne_generale[0], 2) if moyenne_generale and moyenne_generale[0] else 0
 
     def fetch_statistiques(self):
-        """Retourne les statistiques générales."""
 
         return {
             "nombre_candidats": self.get_nombre_total_candidats(),
@@ -156,7 +149,6 @@ class DatabaseManager:
 
 
     def fetch_moyenne_cycle(self, numero_table):
-        """Récupère la moy du cycle et le nbre de fois pour un candidat donné."""
         self.cursor.execute("SELECT moyenne_cycle, nombre_de_fois FROM LivretScolaire WHERE `N° de table` = ?",
                             (numero_table,))
         result = self.cursor.fetchone()
@@ -188,12 +180,10 @@ class DatabaseManager:
         return self.cursor.fetchall()
 
     def get_candidat_by_num_table(self, num_table):
-        # Récupérer un candidat par son numéro de table
         query = "SELECT * FROM Candidats WHERE `N° de table` = ?"
         self.cursor.execute(query, (num_table,))
         return self.cursor.fetchone()
     def update_candidat(self, num_table, nouvelles_valeurs):
-        # Mettre à jour un candidat
         query = """
         UPDATE Candidats
         SET `Prenom (s)` = ?, `NOM` = ?, `Date de nais.` = ?, `Lieu de nais.` = ?,
