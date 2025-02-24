@@ -206,7 +206,7 @@ class DatabaseManager:
                 self.cursor.execute("DELETE FROM Candidats WHERE `N° de table` = ?", (num_table,))
                 self.conn.commit()
             except Exception as e:
-                self.conn.rollback()  # Annuler en cas d'erreur
+                self.conn.rollback()  #si erreur annulation
                 raise e
 
 
